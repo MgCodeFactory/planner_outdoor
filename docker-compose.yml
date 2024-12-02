@@ -1,0 +1,30 @@
+services:
+  mysql:
+    image: mysql
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: po_mysql
+    env_file: .env
+    volumes:
+      - po_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  django:
+    image: django
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: po_django
+    env_file: .env
+    volumes:
+      - ./backend:/po_django
+    ports:
+      - "8020:8000"
+    depends_on:
+      - mysql
+
+volumes:
+  po_data:
+    name: po_data
