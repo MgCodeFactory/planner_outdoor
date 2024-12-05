@@ -1,47 +1,135 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
+from .permissions import CustomPerm1
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema
 import requests
-from po_app.models import Users, Activities, Allergens, UserActivities, UserAllergens, PlannedActivities
-from po_app.serializers import UsersSerializer, ActivitiesSerializer, AllergensSerializer, UserActivitiesSerializer, UserAllergensSerializer, PlannedActivitiesSerializer
+from po_app.models import (
+    Users,
+    Activities,
+    Allergens,
+    UserActivities,
+    UserAllergens,
+    PlannedActivities,
+)
+from po_app.serializers import (
+    UsersSerializer,
+    ActivitiesSerializer,
+    AllergensSerializer,
+    UserActivitiesSerializer,
+    UserAllergensSerializer,
+    PlannedActivitiesSerializer,
+)
 
 
-class UsersViewSet(viewsets.ModelViewSet):
+class CustomViewset(viewsets.ModelViewSet):
+    """
+    Custom viewset to manage actions in viewsets.
+    """
+    hidden_actions = []
+
+    def get_serializer_class(self):
+        """
+        Modify serializer class based on action.
+        """
+        if self.action in self.hidden_actions:
+            return None
+        return super().get_serializer_class()
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Override dispatch method to exclude hidden actions.
+        """
+        for action in self.hidden_actions:
+            setattr(self, action, self.hidden_action)
+        return super().dispatch(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def hidden_action(self, request, *args, **kwargs):
+        pass
+
+
+class UsersViewSet(CustomViewset):
     """
     API endpoint for users.
     """
+
     queryset = Users.objects.all()
     serializer_class = UsersSerializer
+    permission_classes = [CustomPerm1]
+    hidden_actions = ["update"]
 
     def list(self, request):
+        """
+        List all users.
+        Special permissions for staff users.
+        """
         try:
             users = self.queryset
             serializer = UsersSerializer(users, many=True)
-            if serializer:
-                return Response(serializer.data, status=200)
-            return Response(serializer.error_messages, status=400)
+            return Response(serializer.data, status=200)
         except Exception as e:
             return Response(str(e), status=500)
 
     def create(self, request):
-        pass
+        """
+        Create a new user.
+        """
+        try:
+            serializer = UsersSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response(str(e), status=500)
 
     def retrieve(self, request, pk=None):
-        pass
-
-    def update(self, request, pk=None):
-        pass
+        """
+        Retrieve a user by id.
+        Special permissions for staff users.
+        """
+        try:
+            user = self.queryset.get(pk=pk)
+            serializer = UsersSerializer(user)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response(str(e), status=500)
 
     def partial_update(self, request, pk=None):
-        pass
+        """
+        Update a user by id.
+        Special permissions for staff users.
+        Special permissions for owner users.
+        """
+        try:
+            user = self.queryset.get(pk=pk)
+            serializer = UsersSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response(str(e), status=500)
 
     def destroy(self, request, pk=None):
-        pass
+        """
+        Destroy a user by id.
+        Special permissions for staff users.
+        Special permissions for owner users.
+        """
+        try:
+            user = self.queryset.get(pk=pk)
+            user.delete()
+            return Response(status=204)
+        except Exception as e:
+            return Response(str(e), status=500)
 
 
 class ActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for activities.
     """
+
     queryset = Activities.objects.all()
     serializer_class = ActivitiesSerializer
 
@@ -68,6 +156,7 @@ class AllergensViewSet(viewsets.ModelViewSet):
     """
     API endpoint for allergens.
     """
+
     queryset = Allergens.objects.all()
     serializer_class = AllergensSerializer
 
@@ -94,6 +183,7 @@ class UserActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for user activities.
     """
+
     queryset = UserActivities.objects.all()
     serializer_class = UserActivitiesSerializer
 
@@ -120,6 +210,7 @@ class UserAllergensViewSet(viewsets.ModelViewSet):
     """
     API endpoint for user allergens.
     """
+
     queryset = UserAllergens.objects.all()
     serializer_class = UserAllergensSerializer
 
@@ -146,6 +237,7 @@ class PlannedActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for planned activities.
     """
+
     queryset = PlannedActivities.objects.all()
     serializer_class = PlannedActivitiesSerializer
 

@@ -9,7 +9,7 @@ class Users(AbstractUser):
         - username : Username of the user.
         - email : email address with validation type by django.
         - password : password automatically hashed.
-        - first_name et last_name : Prénom et nom de famille.
+        - first_name et last_name.
         - is_staff : Set the staff status, so can access the admin site.
         - is_superuser : Set the superuser status, so can access the admin site and manage everything.
         - is_active : Specify if user is active or not.

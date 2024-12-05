@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "corsheaders",
     "django_extensions",
-    "drf_yasg",
+    "drf_spectacular",
     "po_app",
 ]
 
@@ -89,8 +89,12 @@ DATABASES = {
         "NAME": os.environ.get("MYSQL_DATABASE"),
         "USER": os.environ.get("MYSQL_USER"),
         "PASSWORD": os.environ.get("MYSQL_PASSWORD"),
-        "HOST": os.environ.get("MYSQL_HOST"),
+        "HOST": os.environ.get("MYSQL_HOST", "localhost"),
         "PORT": os.environ.get("MYSQL_PORT"),
+        "OPTIONS": {
+            "connect_timeout": 5,
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -111,6 +115,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+    {
+        "NAME": "po_app.validators.CustomPasswordValidator",
+    },
 ]
 
 # Custom user model
@@ -126,41 +133,48 @@ PASSWORD_HASHERS = [
 ]
 
 # Secure cookies and session parameters
-CSRF_COOKIE_SECURE = True
+# Only False in dev environment in API (no front usage) !
+CSRF_COOKIE_SECURE = False
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Rest Framework cofiguration and Simple JWT secure cookie
+# Rest Framework configuration
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
-    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "DEFAULT_SCHEMA_CLASS": ("drf_spectacular.openapi.AutoSchema"),
 }
+
+# Simple JWT conficuration
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
-    "AUTH_COOKIE": "po_app_access_token",
-    "AUTH_COOKIE_SECURE": False,  # Only False in dev environment !
-    "AUTH_COOKIE_HTTP_ONLY": True,
-    "AUTH_COOKIE_SAMESITE": "Lax",
 }
 
-# Swagger settings for API documentation
-SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": False,
-    "SECURITY_DEFINITIONS": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
-        },
-    },
+# dj rest auth configuration
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_COOKIE": "po_app_access_token",
+    "JWT_AUTH_REFRESH_COOKIE": "po_app_refresh_token",
+    "JWT_AUTH_HTTPONLY": True,  # Javascript can't access the token
+    # Only False in dev environment in API (no front usage) !
+    "JWT_AUTH_COOKIE_USE_CSRF": False,
+    "JWT_AUTH_SECURE": False,  # Only False in dev environment !
+    "JWT_AUTH_SAMESITE": "Lax",
+}
+
+# Spectacular settings for API documentation
+SPECTACULAR_SETTINGS = {
+    "TITLE": "PLANNER OUTDOOR",
+    "DESCRIPTION": "Planify outdoor activities",
+    "VERSION": "1",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
 }
 
 # Allow requests from Vue.js frontend

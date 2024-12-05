@@ -8,8 +8,8 @@ dj-rest-auth==4.0.1
 djangorestframework-simplejwt==5.3.1
 # Python library for yasg
 setuptools==75.6.0
-# Automatic swagger documentation
-drf-yasg==1.21.7
+# Recommended DRF documentation OpenAPI 3
+drf-spectacular==0.28.0
 # Used for CORS (backend django - frontend Vue.js)
 django-cors-headers==4.6.0
 # django shell utilities
