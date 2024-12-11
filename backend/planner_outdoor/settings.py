@@ -89,10 +89,13 @@ DATABASES = {
         "NAME": os.environ.get("MYSQL_DATABASE"),
         "USER": os.environ.get("MYSQL_USER"),
         "PASSWORD": os.environ.get("MYSQL_PASSWORD"),
-        "HOST": os.environ.get("MYSQL_HOST", "localhost"),
+        "HOST": os.environ.get("MYSQL_HOST"),
         "PORT": os.environ.get("MYSQL_PORT"),
+        "TEST": {
+            "NAME": "test_po_db",
+        },
         "OPTIONS": {
-            "connect_timeout": 5,
+            # "connect_timeout": 5,
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }

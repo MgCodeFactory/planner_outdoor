@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class Users(AbstractUser):
@@ -16,34 +17,39 @@ class Users(AbstractUser):
         - last_login : Last login date.
         - date_joined : Creation date.
 
-    Ovveride the default Django User model to add unique option to email field.
-    Adding address field to the user model.
+    Ovveride the default Django User model:
+    - Change username len.
+    - Add unique option to email field.
+    - Add address field to the user model.
     """
 
+    username = models.CharField(
+        unique=True, max_length=50, blank=False, null=False)
     email = models.EmailField(unique=True, blank=False, null=False)
-    address = models.CharField(max_length=255, blank=False, null=False)
+    address = models.CharField(max_length=200, blank=False, null=False)
 
     def __str__(self):
         """
         Returns a string representation of the user object.
         """
-        return f"{self.username} ({self.email})"
+        return f"{self.username} - {self.email}"
 
 
 class Activities(models.Model):
     """
     Model representing an activity.
     """
-    name = models.CharField(
-        unique=True, max_length=100, blank=False, null=False)
+
+    name = models.CharField(unique=True, max_length=50,
+                            blank=False, null=False)
     description = models.CharField(
-        unique=True, max_length=255, blank=False, null=False)
+        unique=True, max_length=200, blank=False, null=False)
 
     def __str__(self):
         """
         Returns a string representation of the activity object.
         """
-        return f"{self.name} ({self.description})"
+        return f"{self.name} - {self.description}"
 
     class Meta:
         verbose_name_plural = "Activities"
@@ -53,16 +59,17 @@ class Allergens(models.Model):
     """
     Model representing an allergen.
     """
-    name = models.CharField(
-        unique=True, max_length=100, blank=False, null=False)
+
+    name = models.CharField(unique=True, max_length=50,
+                            blank=False, null=False)
     description = models.CharField(
-        unique=True, max_length=255, blank=False, null=False)
+        unique=True, max_length=200, blank=False, null=False)
 
     def __str__(self):
         """
         Returns a string representation of the allergen object.
         """
-        return f"{self.name} ({self.description})"
+        return f"{self.name} - {self.description}"
 
     class Meta:
         verbose_name_plural = "Allergens"
@@ -72,54 +79,60 @@ class UserActivities(models.Model):
     """
     Model representing a user's activity.
     """
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
-    activity_id = models.ForeignKey(Activities, on_delete=models.CASCADE)
+
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    activity = models.ForeignKey(Activities, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ("user_id", "activity_id")
+        unique_together = ("user", "activity")
         verbose_name_plural = "UserActivities"
 
     def __str__(self) -> str:
         """
         Returns a string representation of the user activity object.
         """
-        return f"{self.user_id.username} {self.activity_id.name}"
+        return f"{self.user.username} - {self.activity.name}"
 
 
 class UserAllergens(models.Model):
     """
     Model representing a user's allergen.
     """
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
-    allergen_id = models.ForeignKey(Allergens, on_delete=models.CASCADE)
+
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    allergen = models.ForeignKey(Allergens, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ("user_id", "allergen_id")
+        unique_together = ("user", "allergen")
         verbose_name_plural = "UserAllergens"
 
     def __str__(self) -> str:
         """
         Returns a string representation of the user allergen object.
         """
-        return f"{self.user_id.username} - {self.allergen_id.name}"
+        return f"{self.user.username} - {self.allergen.name}"
 
 
 class PlannedActivities(models.Model):
     """
     Model representing a planned activity by a user.
     """
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
-    activity_id = models.ForeignKey(Activities, on_delete=models.CASCADE)
-    location = models.CharField(max_length=250)
-    start_date = models.DateField()
-    end_date = models.DateField()
+
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    activity = models.ForeignKey(Activities, on_delete=models.CASCADE)
+    location = models.CharField(max_length=200, blank=False, null=False)
+    start_datetime = models.DateTimeField(
+        blank=False, null=False, default=timezone.now)
+    end_datetime = models.DateTimeField(
+        blank=False, null=False, default=timezone.now)
 
     class Meta:
-        unique_together = ("user_id", "activity_id", "start_date", "end_date")
+        unique_together = ("user", "activity",
+                           "start_datetime", "end_datetime")
         verbose_name_plural = "PlannedActivities"
 
     def __str__(self) -> str:
         """
         Returns a string representation of the planned activity object.
         """
-        return f"{self.user_id.username} {self.activity_id.name} {self.start_date} {self.end_date}"
+        return f"{self.user.username} - {self.activity.name} - {self.start_datetime} - {self.end_datetime}"

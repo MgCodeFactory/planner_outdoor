@@ -1,8 +1,7 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from .permissions import CustomPerm1
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
-import requests
 from po_app.models import (
     Users,
     Activities,
@@ -66,9 +65,9 @@ class UsersViewSet(CustomViewset):
         try:
             users = self.queryset
             serializer = UsersSerializer(users, many=True)
-            return Response(serializer.data, status=200)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(str(e), status=500)
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request):
         """
@@ -78,10 +77,10 @@ class UsersViewSet(CustomViewset):
             serializer = UsersSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=201)
-            return Response(serializer.errors, status=400)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(str(e), status=500)
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def retrieve(self, request, pk=None):
         """
@@ -91,9 +90,9 @@ class UsersViewSet(CustomViewset):
         try:
             user = self.queryset.get(pk=pk)
             serializer = UsersSerializer(user)
-            return Response(serializer.data, status=200)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response(str(e), status=500)
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def partial_update(self, request, pk=None):
         """
@@ -106,10 +105,10 @@ class UsersViewSet(CustomViewset):
             serializer = UsersSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=200)
-            return Response(serializer.errors, status=400)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response(str(e), status=500)
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def destroy(self, request, pk=None):
         """
@@ -120,9 +119,9 @@ class UsersViewSet(CustomViewset):
         try:
             user = self.queryset.get(pk=pk)
             user.delete()
-            return Response(status=204)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            return Response(str(e), status=500)
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ActivitiesViewSet(viewsets.ModelViewSet):
