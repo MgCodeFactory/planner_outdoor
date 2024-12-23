@@ -118,9 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
-    {
-        "NAME": "po_app.validators.CustomPasswordValidator",
-    },
 ]
 
 # Custom user model
@@ -195,6 +192,9 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+# Custom datetime input format
+DATETIME_INPUT_FORMATS = ["%Y-%m-%d %H:%M"]
 
 
 # Static files (CSS, JavaScript, Images)

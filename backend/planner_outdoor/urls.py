@@ -16,16 +16,16 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView
-from po_app.authenticate import CustomUserDetailsView
+# from po_app.authenticate import CustomUserDetailsView
 from dj_rest_auth.views import (
     LoginView,
     LogoutView,
     PasswordChangeView,
     PasswordResetView,
     PasswordResetConfirmView,
+    UserDetailsView,
 )
 from po_app.views import (
     UsersViewSet,
@@ -41,40 +41,147 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-router = DefaultRouter()
-router.register(r"users",
-                UsersViewSet,
-                basename="users")
-router.register(r"activities",
-                ActivitiesViewSet,
-                basename="activities")
-router.register(r"allergens",
-                AllergensViewSet,
-                basename="allergens")
-router.register(r"user-activities",
-                UserActivitiesViewSet,
-                basename="user-activities")
-router.register(r"user-allergens",
-                UserAllergensViewSet,
-                basename="user-allergens")
-router.register(r"planned-activities",
-                PlannedActivitiesViewSet,
-                basename="planned-activities")
-
 urlpatterns = [
     # Django admin console endpoint
     path("admin/", admin.site.urls),
     # po_app endpoints
-    path("", include(router.urls)),
+    path(
+        "users-list/",
+        UsersViewSet.as_view(
+            {
+                'get': 'list',
+                'post': 'create',
+            }
+        ),
+        name="users-list",
+    ),
+    path(
+        "user-detail/<int:pk>/",
+        UsersViewSet.as_view(
+            {
+                'get': 'retrieve',
+                'patch': 'partial_update',
+                'delete': 'destroy',
+            }
+        ),
+        name="user-detail",
+    ),
+    path(
+        "activities-list/",
+        ActivitiesViewSet.as_view(
+            {
+                'get': 'list',
+                'post': 'create',
+            }
+        ),
+        name="activities-list"
+    ),
+    path(
+        "activity-detail/<int:pk>/",
+        ActivitiesViewSet.as_view(
+            {
+                'get': 'retrieve',
+                'patch': 'partial_update',
+                'delete': 'destroy',
+            }
+        ),
+        name="activity-detail"
+    ),
+    path(
+        "allergens-list/",
+        AllergensViewSet.as_view(
+            {
+                'get': 'list',
+                'post': 'create',
+            }
+        ),
+        name="allergens-list"
+    ),
+    path(
+        "allergen-detail/<int:pk>/",
+        AllergensViewSet.as_view(
+            {
+                'get': 'retrieve',
+                'patch': 'partial_update',
+                'delete': 'destroy',
+            }
+        ),
+        name="allergen-detail"
+    ),
+    path(
+        "user-activities-list/",
+        UserActivitiesViewSet.as_view(
+            {
+                'get': 'list',
+                'post': 'create',
+            }
+        ),
+        name="user-activities-list"
+    ),
+    path(
+        "user-activity-detail/<int:pk>/",
+        UserActivitiesViewSet.as_view(
+            {
+                'get': 'retrieve',
+                'put': 'update',
+                'delete': 'destroy',
+            }
+        ),
+        name="user-activity-detail"
+    ),
+    path(
+        "user-allergens-list/",
+        UserAllergensViewSet.as_view(
+            {
+                'get': 'list',
+                'post': 'create',
+            }
+        ),
+        name="user-allergens-list"
+    ),
+    path(
+        "user-allergen-detail/<int:pk>",
+        UserAllergensViewSet.as_view(
+            {
+                'get': 'retrieve',
+                'put': 'update',
+                'delete': 'destroy',
+            }
+        ),
+        name="user-allergen-detail"
+    ),
+    path(
+        "planned-activities-list/",
+        PlannedActivitiesViewSet.as_view(
+            {
+                'get': 'list',
+                'post': 'create',
+            }
+        ),
+        name="planned-activities-list"
+    ),
+    path(
+        "planned-activity-detail/<int:pk>",
+        PlannedActivitiesViewSet.as_view(
+            {
+                'get': 'retrieve',
+                'put': 'update',
+                'delete': 'destroy',
+            }
+        ),
+        name="planned-activity-detail"
+    ),
     # Authenticate endpoints
-    path("auth/login/",
-         LoginView.as_view(),
-         name="auth_login",
-         ),
-    path("auth/logout/",
-         LogoutView.as_view(),
-         name="auth_logout",
-         ),
+    path(
+        "auth/login/",
+        LoginView.as_view(),
+        name="auth_login",
+    ),
+    path(
+        "auth/logout/",
+        LogoutView.as_view(),
+        name="auth_logout",
+    ),
     path(
         "auth/password/change/",
         PasswordChangeView.as_view(),
@@ -90,20 +197,23 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(),
         name="auth_password_reset_confirm",
     ),
-    path("auth/token/verify/",
-         TokenVerifyView.as_view(),
-         name="auth_token_verify",
-         ),
-    # Manage Authenticated user GET and PATCH
-    path("auth/user/",
-         CustomUserDetailsView.as_view(),
-         name="auth_user",
-         ),
+    path(
+        "auth/token/verify/",
+        TokenVerifyView.as_view(),
+        name="auth_token_verify",
+    ),
+    # auth user endpoints
+    path(
+        "auth/user/",
+        UserDetailsView.as_view(),
+        name="auth_user",
+    ),
     # Documentation API endpoints
-    path("schema/",
-         SpectacularAPIView.as_view(),
-         name="schema",
-         ),
+    path(
+        "schema/",
+        SpectacularAPIView.as_view(),
+        name="schema",
+    ),
     path(
         "schema/swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),

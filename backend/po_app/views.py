@@ -1,7 +1,11 @@
 from rest_framework import viewsets, status
-from .permissions import CustomPerm1
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
+from rest_framework.exceptions import MethodNotAllowed
+from .permissions import (
+    CustomPermUsers,
+    CustomPermActivities,
+    CustomPermPlanned,
+)
 from po_app.models import (
     Users,
     Activities,
@@ -20,42 +24,51 @@ from po_app.serializers import (
 )
 
 
-class CustomViewset(viewsets.ModelViewSet):
-    """
+"""class CustomViewset(viewsets.ModelViewSet):
+    
     Custom viewset to manage actions in viewsets.
-    """
-    hidden_actions = []
+    
+
+    def get_schema_operation(self, path, method):
+        
+        Override the get_schema_operation
+        to exclude actions listed in "hidden_actions.
+        
+        method = method.lower()
+        action = self.action_map.get(method, '')
+
+        if action in self.hidden_actions:
+            return None
+        return super().get_schema_operation(path, method)
 
     def get_serializer_class(self):
-        """
-        Modify serializer class based on action.
-        """
-        if self.action in self.hidden_actions:
-            return None
+        
+        Just return the get_serializer_class
+        
         return super().get_serializer_class()
 
     def dispatch(self, request, *args, **kwargs):
-        """
-        Override dispatch method to exclude hidden actions.
-        """
-        for action in self.hidden_actions:
-            setattr(self, action, self.hidden_action)
+        
+        Just return the dispatch method.
+        
         return super().dispatch(request, *args, **kwargs)
 
     @extend_schema(exclude=True)
     def hidden_action(self, request, *args, **kwargs):
-        pass
+        
+        Hide method in drf_spectacular documentation.
+        
+        pass"""
 
 
-class UsersViewSet(CustomViewset):
+class UsersViewSet(viewsets.ModelViewSet):
     """
     API endpoint for users.
     """
 
     queryset = Users.objects.all()
     serializer_class = UsersSerializer
-    permission_classes = [CustomPerm1]
-    hidden_actions = ["update"]
+    permission_classes = [CustomPermUsers]
 
     def list(self, request):
         """
@@ -94,6 +107,9 @@ class UsersViewSet(CustomViewset):
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PUT", detail="Method PUT not allowed.")
+
     def partial_update(self, request, pk=None):
         """
         Update a user by id.
@@ -131,9 +147,19 @@ class ActivitiesViewSet(viewsets.ModelViewSet):
 
     queryset = Activities.objects.all()
     serializer_class = ActivitiesSerializer
+    permission_classes = [CustomPermActivities]
 
     def list(self, request):
-        pass
+        """
+        List all activities.pass
+        Special permissions for staff users.
+        """
+        try:
+            activities = self.queryset
+            serializer = ActivitiesSerializer(activities, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request):
         pass
@@ -142,7 +168,7 @@ class ActivitiesViewSet(viewsets.ModelViewSet):
         pass
 
     def update(self, request, pk=None):
-        pass
+        raise MethodNotAllowed("PUT", detail="Method PUT not allowed.")
 
     def partial_update(self, request, pk=None):
         pass
@@ -158,9 +184,19 @@ class AllergensViewSet(viewsets.ModelViewSet):
 
     queryset = Allergens.objects.all()
     serializer_class = AllergensSerializer
+    permission_classes = [CustomPermActivities]
 
     def list(self, request):
-        pass
+        """
+        List all Allergens.
+        Special permissions for staff users.
+        """
+        try:
+            allergens = self.queryset
+            serializer = AllergensSerializer(allergens, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request):
         pass
@@ -169,7 +205,7 @@ class AllergensViewSet(viewsets.ModelViewSet):
         pass
 
     def update(self, request, pk=None):
-        pass
+        raise MethodNotAllowed("PUT", detail="Method PUT not allowed.")
 
     def partial_update(self, request, pk=None):
         pass
@@ -185,6 +221,7 @@ class UserActivitiesViewSet(viewsets.ModelViewSet):
 
     queryset = UserActivities.objects.all()
     serializer_class = UserActivitiesSerializer
+    permission_classes = [CustomPermPlanned]
 
     def list(self, request):
         pass
@@ -198,8 +235,8 @@ class UserActivitiesViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         pass
 
-    def partial_update(self, request, pk=None):
-        pass
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PATCH", detail="Method PATCH not allowed.")
 
     def destroy(self, request, pk=None):
         pass
@@ -212,6 +249,7 @@ class UserAllergensViewSet(viewsets.ModelViewSet):
 
     queryset = UserAllergens.objects.all()
     serializer_class = UserAllergensSerializer
+    permission_classes = [CustomPermPlanned]
 
     def list(self, request):
         pass
@@ -225,8 +263,8 @@ class UserAllergensViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         pass
 
-    def partial_update(self, request, pk=None):
-        pass
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PATCH", detail="Method PATCH not allowed.")
 
     def destroy(self, request, pk=None):
         pass
@@ -239,6 +277,7 @@ class PlannedActivitiesViewSet(viewsets.ModelViewSet):
 
     queryset = PlannedActivities.objects.all()
     serializer_class = PlannedActivitiesSerializer
+    permission_classes = [CustomPermPlanned]
 
     def list(self, request):
         pass
@@ -252,8 +291,8 @@ class PlannedActivitiesViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         pass
 
-    def partial_update(self, request, pk=None):
-        pass
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PATCH", detail="Method PATCH not allowed.")
 
     def destroy(self, request, pk=None):
         pass

@@ -1,6 +1,15 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+from .validators import (
+    CustomUsernameValidator,
+    CustomPasswordValidator,
+    CustomLocationValidator,
+    CustomNameValidator,
+    CustomDescriptionValidator,
+)
 
 
 class Users(AbstractUser):
@@ -20,13 +29,40 @@ class Users(AbstractUser):
     Ovveride the default Django User model:
     - Change username len.
     - Add unique option to email field.
-    - Add address field to the user model.
+    - Add location field to the user model.
+    - Ovveride the django save method.
     """
 
     username = models.CharField(
-        unique=True, max_length=50, blank=False, null=False)
-    email = models.EmailField(unique=True, blank=False, null=False)
-    address = models.CharField(max_length=200, blank=False, null=False)
+        unique=True,
+        max_length=50,
+        blank=False,
+        null=False,
+        validators=[CustomUsernameValidator()],
+    )
+    email = models.EmailField(
+        unique=True,
+        blank=False,
+        null=False,
+    )
+    password = models.CharField(
+        max_length=128,
+        blank=False,
+        null=False,
+        validators=[CustomPasswordValidator()],
+    )
+    location = models.JSONField(
+        blank=False,
+        null=False,
+        validators=[CustomLocationValidator()],
+    )
+
+    def save(self, *args, **kwargs):
+        """
+        Override save method to hash password before save user.
+        """
+        self.password = make_password(self.password)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """
@@ -40,10 +76,23 @@ class Activities(models.Model):
     Model representing an activity.
     """
 
-    name = models.CharField(unique=True, max_length=50,
-                            blank=False, null=False)
+    name = models.CharField(
+        unique=True,
+        max_length=50,
+        blank=False,
+        null=False,
+        validators=[CustomNameValidator()],
+    )
     description = models.CharField(
-        unique=True, max_length=200, blank=False, null=False)
+        unique=True,
+        max_length=200,
+        blank=False,
+        null=False,
+        validators=[CustomDescriptionValidator()],
+    )
+
+    class Meta:
+        verbose_name_plural = "Activities"
 
     def __str__(self):
         """
@@ -51,19 +100,29 @@ class Activities(models.Model):
         """
         return f"{self.name} - {self.description}"
 
-    class Meta:
-        verbose_name_plural = "Activities"
-
 
 class Allergens(models.Model):
     """
     Model representing an allergen.
     """
 
-    name = models.CharField(unique=True, max_length=50,
-                            blank=False, null=False)
+    name = models.CharField(
+        unique=True,
+        max_length=50,
+        blank=False,
+        null=False,
+        validators=[CustomNameValidator()],
+    )
     description = models.CharField(
-        unique=True, max_length=200, blank=False, null=False)
+        unique=True,
+        max_length=200,
+        blank=False,
+        null=False,
+        validators=[CustomDescriptionValidator()],
+    )
+
+    class Meta:
+        verbose_name_plural = "Allergens"
 
     def __str__(self):
         """
@@ -71,17 +130,20 @@ class Allergens(models.Model):
         """
         return f"{self.name} - {self.description}"
 
-    class Meta:
-        verbose_name_plural = "Allergens"
-
 
 class UserActivities(models.Model):
     """
     Model representing a user's activity.
     """
 
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    activity = models.ForeignKey(Activities, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE,
+    )
+    activity = models.ForeignKey(
+        Activities,
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         unique_together = ("user", "activity")
@@ -99,8 +161,14 @@ class UserAllergens(models.Model):
     Model representing a user's allergen.
     """
 
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    allergen = models.ForeignKey(Allergens, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE,
+    )
+    allergen = models.ForeignKey(
+        Allergens,
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         unique_together = ("user", "allergen")
@@ -118,13 +186,39 @@ class PlannedActivities(models.Model):
     Model representing a planned activity by a user.
     """
 
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    activity = models.ForeignKey(Activities, on_delete=models.CASCADE)
-    location = models.CharField(max_length=200, blank=False, null=False)
+    user = models.ForeignKey(
+        Users,
+        on_delete=models.CASCADE,
+    )
+    activity = models.ForeignKey(
+        Activities,
+        on_delete=models.CASCADE,
+    )
+    location = models.JSONField(
+        blank=False,
+        null=False,
+        validators=[CustomLocationValidator()],
+    )
     start_datetime = models.DateTimeField(
-        blank=False, null=False, default=timezone.now)
+        blank=False,
+        null=False,
+        default=timezone.now,
+    )
     end_datetime = models.DateTimeField(
-        blank=False, null=False, default=timezone.now)
+        blank=False,
+        null=False,
+        default=timezone.now,
+    )
+
+    def clean(self):
+        """
+        Ovveride the clean method for datetime validation.
+        """
+        now = timezone.now()
+        if self.start_datetime < now:
+            raise ValidationError("Start datetime must be >= to now !")
+        if self.end_datetime < self.start_datetime:
+            raise ValidationError("End datetime must be > to start datetime.")
 
     class Meta:
         unique_together = ("user", "activity",
