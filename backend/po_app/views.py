@@ -1,11 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import MethodNotAllowed
-from .permissions import (
-    CustomPermUsers,
-    CustomPermActivities,
-    CustomPermPlanned,
-)
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from po_app.models import (
     Users,
     Activities,
@@ -24,88 +20,69 @@ from po_app.serializers import (
 )
 
 
-"""class CustomViewset(viewsets.ModelViewSet):
-    
-    Custom viewset to manage actions in viewsets.
-    
-
-    def get_schema_operation(self, path, method):
-        
-        Override the get_schema_operation
-        to exclude actions listed in "hidden_actions.
-        
-        method = method.lower()
-        action = self.action_map.get(method, '')
-
-        if action in self.hidden_actions:
-            return None
-        return super().get_schema_operation(path, method)
-
-    def get_serializer_class(self):
-        
-        Just return the get_serializer_class
-        
-        return super().get_serializer_class()
-
-    def dispatch(self, request, *args, **kwargs):
-        
-        Just return the dispatch method.
-        
-        return super().dispatch(request, *args, **kwargs)
-
-    @extend_schema(exclude=True)
-    def hidden_action(self, request, *args, **kwargs):
-        
-        Hide method in drf_spectacular documentation.
-        
-        pass"""
-
-
 class UsersViewSet(viewsets.ModelViewSet):
     """
     API endpoint for users.
     """
 
-    queryset = Users.objects.all()
     serializer_class = UsersSerializer
-    permission_classes = [CustomPermUsers]
+
+    def get_queryset(self):
+        """
+        Handle queryset for Users actions.
+        """
+        if self.action == "create":
+            return Users.objects.none()
+        elif self.action == "list":
+            return Users.objects.all()
+        elif self.action in ["retrieve", "partial_update", "destroy"]:
+            if self.request.user.is_staff:
+                return Users.objects.all()
+            return Users.objects.filter(id=self.request.user.id)
+        else:
+            return Users.objects.none()
+
+    def get_permissions(self):
+        """
+        Handle permissions for Users actions.
+        """
+        if self.action == "create":
+            permission_classes = [AllowAny]
+        elif self.action == "list":
+            permission_classes = [IsAdminUser]
+        elif self.action in ["retrieve", "partial_update", "destroy"]:
+            permission_classes = [IsAdminUser | IsAuthenticated]
+        else:
+            permission_classes = []
+
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
         """
         List all users.
         Special permissions for staff users.
         """
-        try:
-            users = self.queryset
-            serializer = UsersSerializer(users, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        users = self.get_queryset()
+        serializer = self.get_serializer(users, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
         """
         Create a new user.
         """
-        try:
-            serializer = UsersSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
         """
         Retrieve a user by id.
         Special permissions for staff users.
         """
-        try:
-            user = self.queryset.get(pk=pk)
-            serializer = UsersSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        user = self.get_object()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PUT", detail="Method PUT not allowed.")
@@ -116,15 +93,11 @@ class UsersViewSet(viewsets.ModelViewSet):
         Special permissions for staff users.
         Special permissions for owner users.
         """
-        try:
-            user = self.queryset.get(pk=pk)
-            serializer = UsersSerializer(user, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     def destroy(self, request, pk=None):
         """
@@ -132,167 +105,416 @@ class UsersViewSet(viewsets.ModelViewSet):
         Special permissions for staff users.
         Special permissions for owner users.
         """
-        try:
-            user = self.queryset.get(pk=pk)
-            user.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        user = self.get_object()
+        self.perform_destroy(user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for activities.
     """
-
-    queryset = Activities.objects.all()
     serializer_class = ActivitiesSerializer
-    permission_classes = [CustomPermActivities]
+
+    def get_queryset(self):
+        """
+        Handle queryset for Activities actions.
+        """
+        if self.action == "list":
+            if self.request.user.is_staff or self.request.user.is_authenticated:
+                return Activities.objects.all()
+        elif self.action in ["create", "retrieve", "partial_update", "destroy"]:
+            if self.request.user.is_staff:
+                return Activities.objects.all()
+        else:
+            return Activities.objects.none()
+
+    def get_permissions(self):
+        """
+        Handle permissions for Activities actions.
+        """
+        if self.action == "list":
+            permission_classes = [IsAdminUser | IsAuthenticated]
+        elif self.action in ["create", "retrieve", "partial_update", "destroy"]:
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = []
+
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
         """
-        List all activities.pass
-        Special permissions for staff users.
+        List all activities.
+        Special permissions for staff and authenticated users.
         """
-        try:
-            activities = self.queryset
-            serializer = ActivitiesSerializer(activities, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        activities = self.get_queryset()
+        serializer = self.get_serializer(activities, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
-        pass
+        """
+        Create a new activity.
+        Special permissions for staff users.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
-        pass
+        """
+        Retrieve an activity by id.
+        Special permissions for staff users.
+        """
+        activity = self.get_object()
+        serializer = self.get_serializer(activity)
+        return Response(serializer.data)
 
     def update(self, request, pk=None):
         raise MethodNotAllowed("PUT", detail="Method PUT not allowed.")
 
     def partial_update(self, request, pk=None):
-        pass
+        """
+        Update an activity by id.
+        Special permissions for staff users.
+        """
+        activity = self.get_object()
+        serializer = self.get_serializer(
+            activity, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     def destroy(self, request, pk=None):
-        pass
+        """
+        Destroy an activity by id.
+        Special permissions for staff users.
+        """
+        activity = self.get_object()
+        self.perform_destroy(activity)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AllergensViewSet(viewsets.ModelViewSet):
     """
     API endpoint for allergens.
     """
-
-    queryset = Allergens.objects.all()
     serializer_class = AllergensSerializer
-    permission_classes = [CustomPermActivities]
+
+    def get_queryset(self):
+        """
+        Handle queryset for Allergens actions.
+        """
+        if self.action == "list":
+            if self.request.user.is_staff or self.request.user.is_authenticated:
+                return Allergens.objects.all()
+        elif self.action in ["create", "retrieve", "partial_update", "destroy"]:
+            if self.request.user.is_staff:
+                return Allergens.objects.all()
+        else:
+            return Allergens.objects.none()
+
+    def get_permissions(self):
+        """
+        Handle permissions for Allergens actions.
+        """
+        if self.action == "list":
+            permission_classes = [IsAdminUser | IsAuthenticated]
+        elif self.action in ["create", "retrieve", "partial_update", "destroy"]:
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = []
+
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
         """
-        List all Allergens.
-        Special permissions for staff users.
+        List all allergens.
+        Special permissions for staff and authenticated users.
         """
-        try:
-            allergens = self.queryset
-            serializer = AllergensSerializer(allergens, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        allergens = self.get_queryset()
+        serializer = self.get_serializer(allergens, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
-        pass
+        """
+        Create a new allergen.
+        Special permissions for staff users.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
-        pass
+        """
+        Retrieve an allergen by id.
+        Special permissions for staff users.
+        """
+        allergen = self.get_object()
+        serializer = self.get_serializer(allergen)
+        return Response(serializer.data)
 
     def update(self, request, pk=None):
         raise MethodNotAllowed("PUT", detail="Method PUT not allowed.")
 
     def partial_update(self, request, pk=None):
-        pass
+        """
+        Update an allergen by id.
+        Special permissions for staff users.
+        """
+        allergen = self.get_object()
+        serializer = self.get_serializer(
+            allergen, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     def destroy(self, request, pk=None):
-        pass
+        """
+        Destroy an allergen by id.
+        Special permissions for staff users.
+        """
+        allergen = self.get_object()
+        self.perform_destroy(allergen)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for user activities.
     """
-
-    queryset = UserActivities.objects.all()
     serializer_class = UserActivitiesSerializer
-    permission_classes = [CustomPermPlanned]
+
+    def get_queryset(self):
+        """
+        Handle queryset for UserActivities actions.
+        """
+        if self.action in ["list", "create", "retrieve", "update", "destroy"]:
+            if self.request.user.is_staff:
+                return UserActivities.objects.all()
+            return UserActivities.objects.filter(user=self.request.user)
+        else:
+            return UserActivities.objects.none()
+
+    def get_permissions(self):
+        """
+        Handle permissions for UserActivities actions.
+        """
+        if self.action in ["list", "create", "retrieve", "update", "destroy"]:
+            permission_classes = [IsAdminUser | IsAuthenticated]
+        else:
+            permission_classes = []
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
-        pass
+        """
+        List all User Activities.
+        Special permissions for staff and authenticated users.
+        """
+        user_activities = self.get_queryset()
+        serializer = self.get_serializer(user_activities, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
-        pass
+        """
+        Create a new User Activity.
+        Special permissions for staff and authenticated users.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
-        pass
+        """
+        Retrieve a User Activity by id.
+        Special permissions for staff and authenticated users.
+        """
+        user_activity = self.get_object()
+        serializer = self.get_serializer(user_activity)
+        return Response(serializer.data)
 
     def update(self, request, pk=None):
-        pass
+        """
+        Update a User Activity by id.
+        Special permissions for staff and authenticated users.
+        """
+        user_activity = self.get_object()
+        serializer = self.get_serializer(
+            user_activity, data=request.data, partial=False)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PATCH", detail="Method PATCH not allowed.")
 
     def destroy(self, request, pk=None):
-        pass
+        """
+        Destroy a User Activity by id.
+        Special permissions for staff and authenticated users.
+        """
+        user_activity = self.get_object()
+        self.perform_destroy(user_activity)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserAllergensViewSet(viewsets.ModelViewSet):
     """
     API endpoint for user allergens.
     """
-
-    queryset = UserAllergens.objects.all()
     serializer_class = UserAllergensSerializer
-    permission_classes = [CustomPermPlanned]
+
+    def get_queryset(self):
+        """
+        Handle queryset for UserAllergens actions.
+        """
+        if self.action in ["list", "create", "retrieve", "update", "destroy"]:
+            if self.request.user.is_staff:
+                return UserAllergens.objects.all()
+            return UserAllergens.objects.filter(user=self.request.user)
+        else:
+            return UserAllergens.objects.none()
+
+    def get_permissions(self):
+        """
+        Handle permissions for UserAllergens actions.
+        """
+        if self.action in ["list", "create", "retrieve", "update", "destroy"]:
+            permission_classes = [IsAdminUser | IsAuthenticated]
+        else:
+            permission_classes = []
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
-        pass
+        """
+        List all User Allergens.
+        Special permissions for staff and authenticated users.
+        """
+        user_allergens = self.get_queryset()
+        serializer = self.get_serializer(user_allergens, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
-        pass
+        """
+        Create a new User Allergen.
+        Special permissions for staff and authenticated users.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
-        pass
+        """
+        Retrieve a User Allergen by id.
+        Special permissions for staff and authenticated users.
+        """
+        user_allergen = self.get_object()
+        serializer = self.get_serializer(user_allergen)
+        return Response(serializer.data)
 
     def update(self, request, pk=None):
-        pass
+        """
+        Update a User Allergen by id.
+        Special permissions for staff and authenticated users.
+        """
+        user_allergen = self.get_object()
+        serializer = self.get_serializer(
+            user_allergen, data=request.data, partial=False)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PATCH", detail="Method PATCH not allowed.")
 
     def destroy(self, request, pk=None):
-        pass
+        """
+        Destroy a User Allergen by id.
+        Special permissions for staff and authenticated users.
+        """
+        user_allergen = self.get_object()
+        self.perform_destroy(user_allergen)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PlannedActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for planned activities.
     """
-
-    queryset = PlannedActivities.objects.all()
     serializer_class = PlannedActivitiesSerializer
-    permission_classes = [CustomPermPlanned]
+
+    def get_queryset(self):
+        """
+        Handle queryset for PlannedActivities actions.
+        """
+        if self.action in ["list", "create", "retrieve", "update", "destroy"]:
+            if self.request.user.is_staff:
+                return PlannedActivities.objects.all()
+            return PlannedActivities.objects.filter(user=self.request.user)
+        else:
+            return PlannedActivities.objects.none()
+
+    def get_permissions(self):
+        """
+        Handle permissions for PlannedActvities actions.
+        """
+        if self.action in ["list", "create", "retrieve", "update", "destroy"]:
+            permission_classes = [IsAdminUser | IsAuthenticated]
+        else:
+            permission_classes = []
+        return [permission() for permission in permission_classes]
 
     def list(self, request):
-        pass
+        """
+        List all Planned Activities.
+        Special permissions for staff and authenticated users.
+        """
+        planned_activities = self.get_queryset()
+        serializer = self.get_serializer(planned_activities, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
-        pass
+        """
+        Create a new Planned Activity.
+        Special permissions for staff and authenticated users.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
-        pass
+        """
+        Retrieve a Planned Activity by id.
+        Special permissions for staff and authenticated users.
+        """
+        planned_activity = self.get_object()
+        serializer = self.get_serializer(planned_activity)
+        return Response(serializer.data)
 
     def update(self, request, pk=None):
-        pass
+        """
+        Update a Planned Activity by id.
+        Special permissions for staff and authenticated users.
+        """
+        planned_activity = self.get_object()
+        serializer = self.get_serializer(
+            planned_activity, data=request.data, partial=False)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PATCH", detail="Method PATCH not allowed.")
 
     def destroy(self, request, pk=None):
-        pass
+        """
+        Destroy a Planned Activity by id.
+        Special permissions for staff and authenticated users.
+        """
+        planned_activity = self.get_object()
+        self.perform_destroy(planned_activity)
+        return Response(status=status.HTTP_204_NO_CONTENT)
