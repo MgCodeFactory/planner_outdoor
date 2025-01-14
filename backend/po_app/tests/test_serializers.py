@@ -1,4 +1,3 @@
-# from rest_framework.exceptions import ValidationError
 from rest_framework.test import APITestCase
 from django.utils import timezone
 from datetime import timedelta

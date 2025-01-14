@@ -338,7 +338,6 @@ class PlannedActivitiesViewsetTest(APITestCase):
             "end_datetime": self.valid_end_datetime,
         }
         response = self.client.put(url, data, format="json")
-        print(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user_activity_updated = PlannedActivities.objects.get(
             id=self.planned_activity_1.id
@@ -355,7 +354,6 @@ class PlannedActivitiesViewsetTest(APITestCase):
             "end_datetime": self.valid_end_datetime,
         }
         response = self.client.put(url, data, format="json")
-        print(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user_activity_updated = PlannedActivities.objects.get(
             id=self.planned_activity_2.id

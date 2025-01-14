@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.hashers import make_password
+# from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -61,7 +61,8 @@ class Users(AbstractUser):
         """
         Override save method to hash password before save user.
         """
-        self.password = make_password(self.password)
+        if self.pk is None or self.password != Users.objects.get(pk=self.pk).password:
+            self.set_password(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
