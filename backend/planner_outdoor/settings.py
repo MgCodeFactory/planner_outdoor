@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 import os
 
@@ -38,10 +39,21 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    # 3rd party libraries
     "drf_spectacular",
     "rest_framework",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
+    # app
     "po_app",
 ]
+
+# Site managment in database required by dj_rest_auth
+SITE_ID = 1
+
+# Add expiration time to django buildin token
+AUTH_TOKEN_EXPIRY = timedelta(hours=1)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -89,7 +101,6 @@ DATABASES = {
             "NAME": "test_po_db",
         },
         "OPTIONS": {
-            # "connect_timeout": 5,
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
@@ -104,11 +115,16 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
+# Django backend auth configuration
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+]
+
 # Rest Framework configuration
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": ("drf_spectacular.openapi.AutoSchema"),

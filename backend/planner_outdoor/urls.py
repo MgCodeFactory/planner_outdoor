@@ -14,8 +14,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from po_app.views import (
     UsersViewSet,
     ActivitiesViewSet,
@@ -23,6 +24,12 @@ from po_app.views import (
     UserActivitiesViewSet,
     UserAllergensViewSet,
     PlannedActivitiesViewSet,
+)
+from dj_rest_auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordChangeView,
+    UserDetailsView,
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -40,8 +47,8 @@ urlpatterns = [
         "users-list/",
         UsersViewSet.as_view(
             {
-                'get': 'list',
-                'post': 'create',
+                "get": "list",
+                "post": "create",
             }
         ),
         name="users-list",
@@ -50,9 +57,9 @@ urlpatterns = [
         "user-detail/<int:pk>/",
         UsersViewSet.as_view(
             {
-                'get': 'retrieve',
-                'patch': 'partial_update',
-                'delete': 'destroy',
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
             }
         ),
         name="user-detail",
@@ -61,109 +68,109 @@ urlpatterns = [
         "activities-list/",
         ActivitiesViewSet.as_view(
             {
-                'get': 'list',
-                'post': 'create',
+                "get": "list",
+                "post": "create",
             }
         ),
-        name="activities-list"
+        name="activities-list",
     ),
     path(
         "activity-detail/<int:pk>/",
         ActivitiesViewSet.as_view(
             {
-                'get': 'retrieve',
-                'patch': 'partial_update',
-                'delete': 'destroy',
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
             }
         ),
-        name="activity-detail"
+        name="activity-detail",
     ),
     path(
         "allergens-list/",
         AllergensViewSet.as_view(
             {
-                'get': 'list',
-                'post': 'create',
+                "get": "list",
+                "post": "create",
             }
         ),
-        name="allergens-list"
+        name="allergens-list",
     ),
     path(
         "allergen-detail/<int:pk>/",
         AllergensViewSet.as_view(
             {
-                'get': 'retrieve',
-                'patch': 'partial_update',
-                'delete': 'destroy',
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
             }
         ),
-        name="allergen-detail"
+        name="allergen-detail",
     ),
     path(
         "user-activities-list/",
         UserActivitiesViewSet.as_view(
             {
-                'get': 'list',
-                'post': 'create',
+                "get": "list",
+                "post": "create",
             }
         ),
-        name="user-activities-list"
+        name="user-activities-list",
     ),
     path(
         "user-activity-detail/<int:pk>/",
         UserActivitiesViewSet.as_view(
             {
-                'get': 'retrieve',
-                'put': 'update',
-                'delete': 'destroy',
+                "get": "retrieve",
+                "put": "update",
+                "delete": "destroy",
             }
         ),
-        name="user-activity-detail"
+        name="user-activity-detail",
     ),
     path(
         "user-allergens-list/",
         UserAllergensViewSet.as_view(
             {
-                'get': 'list',
-                'post': 'create',
+                "get": "list",
+                "post": "create",
             }
         ),
-        name="user-allergens-list"
+        name="user-allergens-list",
     ),
     path(
         "user-allergen-detail/<int:pk>",
         UserAllergensViewSet.as_view(
             {
-                'get': 'retrieve',
-                'put': 'update',
-                'delete': 'destroy',
+                "get": "retrieve",
+                "put": "update",
+                "delete": "destroy",
             }
         ),
-        name="user-allergen-detail"
+        name="user-allergen-detail",
     ),
     path(
         "planned-activities-list/",
         PlannedActivitiesViewSet.as_view(
             {
-                'get': 'list',
-                'post': 'create',
+                "get": "list",
+                "post": "create",
             }
         ),
-        name="planned-activities-list"
+        name="planned-activities-list",
     ),
     path(
         "planned-activity-detail/<int:pk>",
         PlannedActivitiesViewSet.as_view(
             {
-                'get': 'retrieve',
-                'put': 'update',
-                'delete': 'destroy',
+                "get": "retrieve",
+                "put": "update",
+                "delete": "destroy",
             }
         ),
-        name="planned-activity-detail"
+        name="planned-activity-detail",
     ),
-    # Authenticate endpoints
-    # auth user endpoints
+    # dj-rest-auth endpoints (authentication and user details)
+    path("dj-rest-auth/", include("dj_rest_auth.urls")),
     # Documentation API endpoints
     path(
         "schema/",
