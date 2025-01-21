@@ -17,7 +17,7 @@ class CustomUsernameValidator:
         if not isinstance(username, str):
             raise ValidationError("Username must be a valid string.")
         if re.match(r"^[\s]+$", username):
-            raise ValidationError("Username can't be blank.")
+            raise ValidationError("Username cantt be blank.")
         if username.isdigit():
             raise ValidationError("Username must not contains only digit.")
         if not re.match(r"^[a-zA-Z0-9\s_-]+$", username):

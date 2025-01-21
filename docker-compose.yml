@@ -10,6 +10,8 @@ services:
       - po_data:/var/lib/mysql
     ports:
       - "3307:3306"
+    networks:
+      - po_network
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       #timeout: 10s
@@ -26,10 +28,25 @@ services:
       - ./backend:/po_django
     ports:
       - "8020:8000"
+    networks:
+      - po_network
     depends_on:
       mysql:
         condition: service_healthy
     command: python manage.py runserver 0.0.0.0:8000
+
+  papercut:
+    image: changemakerstudiosus/papercut-smtp:latest
+    container_name: po_papercut
+    ports:
+      - "8090:80"
+      - "25:25"
+    networks:
+      - po_network
+
 volumes:
   po_data:
     name: po_data
+
+networks:
+  po_network:

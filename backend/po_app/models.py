@@ -134,7 +134,7 @@ class Allergens(models.Model):
 
 class UserActivities(models.Model):
     """
-    Model representing a user's activity.
+    Model representing a user"s activity.
     """
 
     user = models.ForeignKey(
@@ -159,7 +159,7 @@ class UserActivities(models.Model):
 
 class UserAllergens(models.Model):
     """
-    Model representing a user's allergen.
+    Model representing a user"s allergen.
     """
 
     user = models.ForeignKey(

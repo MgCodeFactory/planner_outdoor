@@ -114,6 +114,7 @@ class ActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for activities.
     """
+
     serializer_class = ActivitiesSerializer
 
     def get_queryset(self):
@@ -199,6 +200,7 @@ class AllergensViewSet(viewsets.ModelViewSet):
     """
     API endpoint for allergens.
     """
+
     serializer_class = AllergensSerializer
 
     def get_queryset(self):
@@ -284,6 +286,7 @@ class UserActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for user activities.
     """
+
     serializer_class = UserActivitiesSerializer
 
     def get_queryset(self):
@@ -342,7 +345,8 @@ class UserActivitiesViewSet(viewsets.ModelViewSet):
         """
         user_activity = self.get_object()
         serializer = self.get_serializer(
-            user_activity, data=request.data, partial=False)
+            user_activity, data=request.data, partial=False
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -364,6 +368,7 @@ class UserAllergensViewSet(viewsets.ModelViewSet):
     """
     API endpoint for user allergens.
     """
+
     serializer_class = UserAllergensSerializer
 
     def get_queryset(self):
@@ -422,7 +427,8 @@ class UserAllergensViewSet(viewsets.ModelViewSet):
         """
         user_allergen = self.get_object()
         serializer = self.get_serializer(
-            user_allergen, data=request.data, partial=False)
+            user_allergen, data=request.data, partial=False
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -444,6 +450,7 @@ class PlannedActivitiesViewSet(viewsets.ModelViewSet):
     """
     API endpoint for planned activities.
     """
+
     serializer_class = PlannedActivitiesSerializer
 
     def get_queryset(self):
@@ -502,7 +509,8 @@ class PlannedActivitiesViewSet(viewsets.ModelViewSet):
         """
         planned_activity = self.get_object()
         serializer = self.get_serializer(
-            planned_activity, data=request.data, partial=False)
+            planned_activity, data=request.data, partial=False
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)

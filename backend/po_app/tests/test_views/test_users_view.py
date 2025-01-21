@@ -83,7 +83,7 @@ class UsersViewsetTest(APITestCase):
         """
         Test that anyone can create a new user.
         """
-        url = reverse("users-list")
+        url = reverse("auth-register")
         data = {
             "username": "create_new_user",
             "email": "create_new_user@example.com",
@@ -105,7 +105,7 @@ class UsersViewsetTest(APITestCase):
         """
         Test it's not possible to create user with invalid data.
         """
-        url = reverse("users-list")
+        url = reverse("auth-register")
         data = {
             "username": 123,
             "email": "test_create_user@example.com",

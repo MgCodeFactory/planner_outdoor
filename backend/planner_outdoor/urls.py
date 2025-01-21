@@ -14,9 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from po_app.auth_views import CustomTokenObtainPairView
+from rest_framework_simplejwt.views import TokenBlacklistView
 from po_app.views import (
     UsersViewSet,
     ActivitiesViewSet,
@@ -25,32 +26,28 @@ from po_app.views import (
     UserAllergensViewSet,
     PlannedActivitiesViewSet,
 )
-from dj_rest_auth.views import (
-    LoginView,
-    LogoutView,
-    PasswordChangeView,
-    UserDetailsView,
-)
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
 
-admin.autodiscover()
-
 urlpatterns = [
-    # Django admin console endpoint
+    # django admin console
     path("admin/", admin.site.urls),
+    # authentification endpoints
+    path("auth/login/",
+         CustomTokenObtainPairView.as_view(),
+         name='token_obtain_pair',
+         ),
+    path("auth/register/",
+         UsersViewSet.as_view({"post": "create"}),
+         name="auth-register",
+         ),
     # po_app endpoints
     path(
         "users-list/",
-        UsersViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
+        UsersViewSet.as_view({"get": "list"}),
         name="users-list",
     ),
     path(
@@ -169,8 +166,6 @@ urlpatterns = [
         ),
         name="planned-activity-detail",
     ),
-    # dj-rest-auth endpoints (authentication and user details)
-    path("dj-rest-auth/", include("dj_rest_auth.urls")),
     # Documentation API endpoints
     path(
         "schema/",
