@@ -68,7 +68,7 @@ ROOT_URLCONF = 'planner_outdoor.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.environ.get("TEMPLATE_PATH")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

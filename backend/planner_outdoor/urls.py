@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from po_app.auth_views import CustomTokenObtainPairView
-from rest_framework_simplejwt.views import TokenBlacklistView
+from po_app.auth_views import (
+    CustomTokenObtainPairView,
+    CustomPasswordResetView,
+    CustomPasswordResetConfirmView,
+)
 from po_app.views import (
     UsersViewSet,
     ActivitiesViewSet,
@@ -44,6 +47,15 @@ urlpatterns = [
          UsersViewSet.as_view({"post": "create"}),
          name="auth-register",
          ),
+    path("auth/password-reset/",
+         CustomPasswordResetView.as_view(),
+         name="password-reset",
+         ),
+    path(
+        "auth/password-reset-confirm/<str:uid>/<str:token>/",
+        CustomPasswordResetConfirmView.as_view(),
+        name="password-reset-confirm",
+    ),
     # po_app endpoints
     path(
         "users-list/",
