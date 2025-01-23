@@ -1,19 +1,19 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import generics, status, response
-from rest_framework.permissions import AllowAny
-from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from rest_framework.generics import GenericAPIView
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
 from django.urls import reverse
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import status, response
+from rest_framework.permissions import AllowAny
+from rest_framework.generics import GenericAPIView
 from po_app.auth_serializers import (
     CustomTokenObtainPairSerializer,
     CustomPasswordResetSerializer,
     CustomPasswordResetConfirmSerializer,
 )
 from .models import Users
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):

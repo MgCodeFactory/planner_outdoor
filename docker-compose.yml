@@ -14,8 +14,6 @@ services:
       - po_network
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      #timeout: 10s
-      #retries: 3
 
   django:
     image: django
@@ -34,6 +32,24 @@ services:
       mysql:
         condition: service_healthy
     command: python manage.py runserver 0.0.0.0:8000
+
+  node:
+    image: node
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: po_node
+    env_file: .env
+    volumes:
+      - ./frontend:/po_node
+      - /po_node/node_modules
+    ports:
+      - "8080:8080"
+    networks:
+      - po_network
+    depends_on:
+      - django
+    command: npm run serve
 
   papercut:
     image: changemakerstudiosus/papercut-smtp:latest

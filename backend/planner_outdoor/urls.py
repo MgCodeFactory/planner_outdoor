@@ -34,6 +34,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from po_app.weather import GeocodingView
 
 urlpatterns = [
     # django admin console
@@ -177,6 +178,12 @@ urlpatterns = [
             }
         ),
         name="planned-activity-detail",
+    ),
+    # Weather API endpoint
+    path(
+        "geocoding/<str:city>/",
+        GeocodingView.as_view(),
+        name="geocoding",
     ),
     # Documentation API endpoints
     path(
