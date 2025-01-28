@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "drf_spectacular",
+    "corsheaders",
     # app
     "po_app",
 ]
@@ -54,6 +55,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -167,8 +169,10 @@ PASSWORD_RESET_TIMEOUT = 3600
 AUTH_USER_MODEL = "po_app.Users"
 
 # Allow requests from Vue.js frontend
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
+    "http://127.0.0.1:8080",
 ]
 
 # Spectacular settings for API documentation
