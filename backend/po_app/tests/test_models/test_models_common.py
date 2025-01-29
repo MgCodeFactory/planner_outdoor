@@ -31,7 +31,6 @@ class BaseLocationTestCase(TestCase):
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         # invalid location general
         self.invalid_location_null = None
@@ -49,196 +48,138 @@ class BaseLocationTestCase(TestCase):
             "lat": None,
             "lon": None,
             "country": None,
-            "state": None,
         }
         # invalid location "name"
         self.invalid_location_missing_key_name = {
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_missing_value_name = {
             "name": None,
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_name_type = {
             "name": 123,
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_name_null = {
             "name": None,
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_name_blank = {
             "name": " ",
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         # invalid location "lat"
         self.invalid_location_missing_key_lat = {
             "name": "London",
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_missing_value_lat = {
             "name": "London",
             "lat": None,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_lat_type = {
             "name": "London",
             "lat": "latitude",
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_lat_null = {
             "name": "London",
             "lat": None,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_lat_blank = {
             "name": "London",
             "lat": "",
             "lon": -0.1276474,
-            "country": "GB",
-            "state": "England",
+            "country": "GB", ,
         }
         self.invalid_location_lat_out_of_range = {
             "name": "London",
             "lat": 100,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         # invalid location "lon"
         self.invalid_location_missing_key_lon = {
             "name": "London",
             "lat": 51.5073219,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_missing_value_lon = {
             "name": "London",
             "lat": 51.5073219,
             "lon": None,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_lon_type = {
             "name": "London",
             "lat": 51.5073219,
             "lon": "longitude",
-            "country": "GB",
-            "state": "England",
+            "country": "GB", ,
         }
         self.invalid_location_lon_null = {
             "name": "London",
             "lat": 51.5073219,
             "lon": None,
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_lon_blank = {
             "name": "London",
             "lat": 51.5073219,
             "lon": "",
             "country": "GB",
-            "state": "England",
         }
         self.invalid_location_lon_out_of_range = {
             "name": "London",
             "lat": 51.5073219,
             "lon": 200,
             "country": "GB",
-            "state": "England",
         }
         # invalid location "country"
         self.invalid_location_missing_key_country = {
             "name": "London",
             "lat": 51.5073219,
             "lon": -0.1276474,
-            "state": "England",
         }
         self.invalid_location_missing_value_country = {
             "name": "London",
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": None,
-            "state": "England",
         }
         self.invalid_location_country_type = {
             "name": "London",
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": 123,
-            "state": "England",
         }
         self.invalid_location_country_null = {
             "name": "London",
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": None,
-            "state": "England",
         }
         self.invalid_location_country_blank = {
             "name": "London",
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": " ",
-            "state": "England",
-        }
-        # invalid location "state"
-        self.invalid_location_missing_key_state = {
-            "name": "London",
-            "lat": 51.5073219,
-            "lon": -0.1276474,
-            "country": "GB",
-        }
-        self.invalid_location_missing_value_state = {
-            "name": "London",
-            "lat": 51.5073219,
-            "lon": -0.1276474,
-            "country": "GB",
-            "state": None,
-        }
-        self.invalid_location_state_type = {
-            "name": "London",
-            "lat": 51.5073219,
-            "lon": -0.1276474,
-            "country": "GB",
-            "state": 123,
-        }
-        self.invalid_location_state_null = {
-            "name": "London",
-            "lat": 51.5073219,
-            "lon": -0.1276474,
-            "country": "GB",
-            "state": None,
-        }
-        self.invalid_location_state_blank = {
-            "name": "London",
-            "lat": 51.5073219,
-            "lon": -0.1276474,
-            "country": "GB",
-            "state": " ",
         }
 
     def test_invalid_location_not_json(self):
@@ -415,41 +356,6 @@ class BaseLocationTestCase(TestCase):
         """
         with self.assertRaises(ValidationError):
             CustomLocationValidator()(self.invalid_location_country_blank)
-
-    def test_invalid_location_missing_key_state(self):
-        """
-        Test invalid location missing key "state".
-        """
-        with self.assertRaises(ValidationError):
-            CustomLocationValidator()(self.invalid_location_missing_key_state)
-
-    def test_invalid_location_missing_value_state(self):
-        """
-        Test invalid location missing value for key "state".
-        """
-        with self.assertRaises(ValidationError):
-            CustomLocationValidator()(self.invalid_location_missing_value_state)
-
-    def test_invalid_location_state_type(self):
-        """
-        Test invalid location state type.
-        """
-        with self.assertRaises(ValidationError):
-            CustomLocationValidator()(self.invalid_location_state_type)
-
-    def test_invalid_location_state_null(self):
-        """
-        Test invalid location state null value.
-        """
-        with self.assertRaises(ValidationError):
-            CustomLocationValidator()(self.invalid_location_state_null)
-
-    def test_invalid_location_state_blank(self):
-        """
-        Test invalid location state blank value.
-        """
-        with self.assertRaises(ValidationError):
-            CustomLocationValidator()(self.invalid_location_state_blank)
 
 
 class BaseNameDescriptionTestCase(TestCase):

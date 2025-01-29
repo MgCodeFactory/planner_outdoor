@@ -21,7 +21,6 @@ class UserActivitiesViewsetTest(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         # instance authenticated user
@@ -34,7 +33,6 @@ class UserActivitiesViewsetTest(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         # instance staff user
@@ -47,7 +45,6 @@ class UserActivitiesViewsetTest(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
             is_staff=True,
         )

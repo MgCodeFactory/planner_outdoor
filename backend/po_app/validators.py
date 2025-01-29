@@ -85,8 +85,8 @@ class CustomLocationValidator:
         Validate location in serializer.
         """
         # init regex
-        required_keys = ["name", "lat", "lon", "country", "state"]
-        regex_name_state = r"^[a-zA-Z\s]+$"
+        required_keys = ["name", "lat", "lon", "country"]
+        regex_name = r"^[a-zA-Z\s]+$"
         regex_country = r"^[A-Z]+$"
         # tests location validation
         try:
@@ -97,17 +97,17 @@ class CustomLocationValidator:
             raise ValidationError("Location can't be null.")
         if not all(key in location for key in required_keys):
             raise ValidationError(
-                "Location must contain all required keys: name, lat, lon, country code, state."
+                "Location must contain all required keys: name, lat, lon, country code."
             )
         if not all(location[key] for key in required_keys):
             raise ValidationError(
-                "Location must contain all required values: name, lat, lon, country code, state."
+                "Location must contain all required values: name, lat, lon, country code."
             )
         if not isinstance(location["name"], str):
             raise ValidationError("Location name must a valid string.")
         if location["name"].isspace():
             raise ValidationError("Location name must not be empty.")
-        if not re.match(regex_name_state, location["name"]):
+        if not re.match(regex_name, location["name"]):
             raise ValidationError("Location name must contain only letters.")
         if not isinstance(location["lat"], (int, float)):
             raise ValidationError(
@@ -132,16 +132,12 @@ class CustomLocationValidator:
             raise ValidationError(
                 "Location country code must contain only A-Z letters."
             )
-        if not isinstance(location["state"], str):
-            raise ValidationError("Location state must be a valid string.")
-        if location["state"].isspace():
-            raise ValidationError("Location state must not be empty.")
 
     def get_help_text(self):
         """
         Returns a help text for the location validator.
         """
-        return "Valid location: Must be a valid JSON dictionary, with keys: name, lat, lon, country, state and valid values inside."
+        return "Valid location: Must be a valid JSON dictionary, with keys: name, lat, lon, country and valid values inside."
 
 
 @deconstructible

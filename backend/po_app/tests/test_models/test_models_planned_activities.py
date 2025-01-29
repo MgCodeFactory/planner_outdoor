@@ -21,7 +21,7 @@ class PlannedActivitiesTestCase(BaseLocationTestCase):
         Set up data for PlannedActivities model.
         """
         super().setUp()
-        # instance user and activity for PlannedActivities:42:39
+        # instance user and activity for PlannedActivities
         self.user = Users.objects.create_user(
             username="user for planned_activity",
             email="user.planned@example.com",

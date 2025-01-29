@@ -38,7 +38,6 @@ class UsersSerializerApiTestCase(APITestCase):
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         # invalid user data
         self.invalid_username = 1234
@@ -273,7 +272,6 @@ class UserActivitiesSerializerApiTestCase(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         # instance activity
@@ -369,7 +367,6 @@ class UserAllergensSerializerApiTestCase(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         # instance allergen
@@ -465,7 +462,6 @@ class PlannedActivitiesSerializerApiTestCase(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         # instance activity
@@ -478,7 +474,6 @@ class PlannedActivitiesSerializerApiTestCase(APITestCase):
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         # data for invalid location
         self.invalid_location = {
@@ -486,7 +481,6 @@ class PlannedActivitiesSerializerApiTestCase(APITestCase):
             "lat": "not a float",
             "lon": "not a float",
             "country": "bad country code",
-            "state": 123,
         }
         # valid start_datetime
         self.valid_start_datetime = timezone.now() + timedelta(minutes=30)

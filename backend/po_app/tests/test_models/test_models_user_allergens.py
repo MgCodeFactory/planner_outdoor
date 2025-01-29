@@ -26,7 +26,6 @@ class UserAllergensTestCase(TestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         self.allergen = Allergens.objects.create(
@@ -124,7 +123,6 @@ class UserAllergensTestCase(TestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         user_allergen = UserAllergens.objects.create(

@@ -6,24 +6,17 @@
     </div>
     <div v-show="success" class="weather-container">
       <div
-        v-for="(item, index) in forecast.list"
+        v-for="(item, index) in forecast"
         :key="index"
         class="weather-item"
       >
-        <p>
-          <ConvertToDate :timestamp="item.dt" />
-        </p>
-        <p>
-          <ConvertToDay :timestamp="item.dt" />
-        </p>
-        <p>
-          <ConvertToCelcius :tempK="item.temp.day" /> °C /
-          <ConvertToFahrenheit :tempK="item.temp.day" /> °F
-        </p>
+        <p>{{ item.date.year }} - {{ item.date.month }} - {{ item.date.day }}</p>
+        <p>MIN: {{item.temperature.min_C}} °C / {{item.temperature.min_F}} °F</p>
+        <p>MAX: {{item.temperature.max_C}} °C / {{item.temperature.max_F}} °F</p>
         <img
-          v-if="item.weather[0].icon"
-          :src="`http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`"
-          :alt="item.weather[0].description"
+          v-if="item.weather_icon"
+          :src="`${urlIcon}/${item.weather_icon}.svg`"
+          :alt="item.weather"
         />
         <p><button @click="goToDetails(item)">Details</button></p>
       </div>
@@ -65,6 +58,7 @@ export default {
     this.fetchWeatherData();
   },
   watch: {
+    "$route.query.city": "fetchWeatherData",
     "$route.query.lat": "fetchWeatherData",
     "$route.query.lon": "fetchWeatherData",
   },
@@ -74,17 +68,21 @@ export default {
     },
   },
   methods: {
+    getIconUrl(iconCode) {
+    return `http://localhost:8020/static/weather_icons/${iconCode}.png`;
+    },
     async fetchWeatherData() {
       try {
+        const city = this.$route.query.city;
         const lat = this.$route.query.lat;
         const lon = this.$route.query.lon;
         this.success = false;
         const response = await axios.get(
-          `http://localhost:8020/po_app/Weather/?lat=${lat}&lon=${lon}`
+          `http://localhost:8020/weather/${lat}/${lon}/`
         );
-        const cityData = response.data.data.city;
-        this.city = `${cityData.name}, ${cityData.country}`;
+        this.city = city;
         this.forecast = response.data.data;
+        this.urlIcon = response.data.url_icon;
         this.success = true;
       } catch (error) {
         console.error("Request error:", error);

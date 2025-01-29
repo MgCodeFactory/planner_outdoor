@@ -23,7 +23,6 @@ class PlannedActivitiesViewsetTest(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         # instance authenticated user
@@ -36,7 +35,6 @@ class PlannedActivitiesViewsetTest(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         # instance staff user
@@ -49,7 +47,6 @@ class PlannedActivitiesViewsetTest(APITestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
             is_staff=True,
         )
@@ -84,21 +81,18 @@ class PlannedActivitiesViewsetTest(APITestCase):
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.location_2 = {
             "name": "London",
             "lat": 51.5073219,
             "lon": -0.1276474,
             "country": "GB",
-            "state": "England",
         }
         self.location_3 = {
             "name": "Rome",
             "lat": 41.902782,
             "lon": 12.496366,
             "country": "IT",
-            "state": "Lazio",
         }
         # data for start_datetime and end_datetime
         start_datetime = timezone.now() + timedelta(minutes=30)

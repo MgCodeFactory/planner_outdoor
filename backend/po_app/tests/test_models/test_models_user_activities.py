@@ -26,7 +26,6 @@ class UserActivitiesTestCase(TestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         self.activity = Activities.objects.create(
@@ -125,7 +124,6 @@ class UserActivitiesTestCase(TestCase):
                 "lat": 51.5073219,
                 "lon": -0.1276474,
                 "country": "GB",
-                "state": "England",
             },
         )
         user_activity = UserActivities.objects.create(

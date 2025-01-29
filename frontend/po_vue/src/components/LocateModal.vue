@@ -54,9 +54,7 @@ export default {
           const response = await axios.get(
             `http://localhost:8020/geocoding/${this.city}/`
           );
-          console.log('API response:', response.data);
           this.selections = response.data.data || [];
-          console.log('Selections:', this.selections);
         } catch (error) {
           console.error('Error fetching city selections:', error);
           this.selections = [];
@@ -70,8 +68,9 @@ export default {
         this.city = `${selection.name}, ${selection.country}`;
         this.selections = [];
         this.$router.push({
-          name: 'Weather',
+          name: 'weather',
           query: {
+            city: this.city,
             lat: selection.lat,
             lon: selection.lon,
           },
