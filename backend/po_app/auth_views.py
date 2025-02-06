@@ -45,7 +45,7 @@ class CustomPasswordResetView(GenericAPIView):
             url = reverse("password-reset-confirm",
                           kwargs={"uid": uid, "token": token})
 
-            reset_link = f"localhost:8020{url}"
+            reset_link = f"http://localhost:8080/#{url}"
 
             msg_html = render_to_string(
                 "password_reset.html", {
@@ -70,7 +70,7 @@ class CustomPasswordResetView(GenericAPIView):
             )
         else:
             return response.Response(
-                {"message": "Invalid email user."},
+                {"error": "Invalid email user."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

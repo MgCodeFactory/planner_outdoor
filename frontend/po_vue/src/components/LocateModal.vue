@@ -1,40 +1,48 @@
 <template>
   <Teleport to="body">
     <div v-if="show" class="modal-background">
-      <form @submit.prevent="fetchSelections" class="modal-container">
-        <div class="modal-item-header">
-          <input
-            type="text"
-            v-model="city"
-            placeholder="Enter a city name..."
-            @input="fetchSelections"
-          />
-        </div>
-        <div class="modal-item-content">
-          <ul v-if="selections.length">
-            <li
-              v-for="(selection, index) in selections"
-              :key="index"
-              @click="selectCity(selection)"
-            >
-              {{ selection.name ? selection.name : 'Unknown' }},
-              {{ selection.country ? selection.country : 'Unknown' }}
-            </li>
-          </ul>
-        </div>
-        <div class="modal-item-footer" @click="$emit('close')">
-          <h4>CLOSE</h4>
-        </div>
-      </form>
+      <div class="modal-container">
+        <form @submit.prevent="fetchSelections" class="form-container">
+          <div>
+            <input
+              class="locate-input"
+              type="text"
+              v-model="city"
+              placeholder="Enter a city name..."
+              @input="fetchSelections"
+            />
+          </div>
+          <div class="locate-ul">
+            <ul v-if="selections.length">
+              <li
+                class="locate-li"
+                v-for="(selection, index) in selections"
+                :key="index"
+                @click="selectCity(selection)"
+              >
+                {{ selection.name ? selection.name : 'Unknown' }},
+                {{ selection.country ? selection.country : 'Unknown' }}
+              </li>
+            </ul>
+          </div>
+          <button class="classic-button" @click="$emit('close')">CLOSE</button>
+        </form>
+      </div>
     </div>
   </Teleport>
 </template>
 
 <script>
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 
 export default {
-  name: 'LocateView',
+  name: 'LocateModal',
+  emits: ['location-selected', 'close'],
+  setup() {
+    const route = useRoute();
+    return { route };
+  },
   props: {
     show: {
       type: Boolean,
@@ -67,14 +75,24 @@ export default {
       if (selection && selection.name && selection.country) {
         this.city = `${selection.name}, ${selection.country}`;
         this.selections = [];
-        this.$router.push({
-          name: 'weather',
-          query: {
-            city: this.city,
+        console.log(`route name: ${this.route.name}`)
+        if (this.route.name === 'register') {
+          this.$emit('location-selected', {
+            name: selection.name,
             lat: selection.lat,
             lon: selection.lon,
-          },
-        });
+            country: selection.country,
+          });
+        } else {
+          this.$router.push({
+            name: 'weather',
+            query: {
+              city: this.city,
+              lat: selection.lat,
+              lon: selection.lon,
+            },
+          });
+        }
         this.city = '';
         this.$emit('close');
       } else {
@@ -85,42 +103,15 @@ export default {
 };
 </script>
 
-<style scoped>
-input {
-  height: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  background-color: transparent;
-  color: var(--color-white);
-  text-align: center;
+<style scoped lang="postcss">
+.locate-input {
+  @apply bg-zinc-100 border border-zinc-300 focus:ring-2 rounded-md font-bold p-2;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  max-height: 200px;
-  overflow-y: auto;
-  color: var(--color-black);
-  text-align: center;
+.locate-ul {
+  @apply w-full max-h-60 overflow-y-auto;
 }
-
-li {
-  color: var(--color-black);
-  font-size: var(--font-size-small);
-  padding: 8px;
-  cursor: pointer;
-}
-
-li:hover {
-  background-color: var(--color-white);
-}
-
-.modal-item-footer:hover {
-  cursor: pointer;
-  background: var(--color-white);
-  color: var(--color-black);
+.locate-li {
+  @apply py-2 px-4 hover:bg-gray-200 font-bold cursor-pointer;
 }
 </style>

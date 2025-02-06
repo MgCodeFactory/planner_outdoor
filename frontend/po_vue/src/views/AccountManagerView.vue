@@ -152,7 +152,6 @@ export default {
 .account-item {
   background-color: var(--color-background-item);
   border: 1px solid var(--color-light-grey);
-  border-radius: var(--default-radius);
   margin: 10px;
   padding: 20px;
   width: 350px;
@@ -174,7 +173,6 @@ export default {
 }
 
 input {
-  border-radius: var(--default-radius);
   border: solid 0px;
   padding: 10px;
   margin-bottom: 10px;
@@ -200,7 +198,6 @@ button {
   row-gap: 50 px;
   border: 0;
   background-color: var(--color-button);
-  border-radius: var(--default-radius);
   font-family: var(--font-family);
   color: var(--color-white);
   cursor: pointer;

@@ -107,7 +107,6 @@ export default {
 
 .modal-content {
   box-shadow: 8px 8px 3px 0px var(--color-dark-grey);
-  border-radius: var(--default-radius);
   background: var(--color-light-grey);
   padding: 30px;
   text-align: center;
@@ -127,7 +126,6 @@ button {
   row-gap: 50 px;
   border: 0;
   background-color: var(--color-button);
-  border-radius: var(--default-radius);
   font-family: var(--font-family);
   color: var(--color-white);
   cursor: pointer;

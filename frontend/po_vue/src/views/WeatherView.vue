@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="router-container">
     <div class="main-item">
       <h2 v-if="success">Weather at {{ city }}</h2>
       <h3 v-else>No weather data or bad city name</h3>
@@ -9,42 +9,37 @@
         v-for="(item, index) in forecast"
         :key="index"
         class="weather-item"
+        @click="goToDetails(item)"
       >
-        <p>{{ item.date.year }} - {{ item.date.month }} - {{ item.date.day }}</p>
-        <p>MIN: {{item.temperature.min_C}} °C / {{item.temperature.min_F}} °F</p>
-        <p>MAX: {{item.temperature.max_C}} °C / {{item.temperature.max_F}} °F</p>
+        <p>
+          {{ item.date.year }} - {{ item.date.month }} - {{ item.date.day }}
+        </p>
+        <p>
+          MIN: {{ item.temperature.min_C }} °C / {{ item.temperature.min_F }} °F
+        </p>
+        <p>
+          MAX: {{ item.temperature.max_C }} °C / {{ item.temperature.max_F }} °F
+        </p>
         <img
           v-if="item.weather_icon"
           :src="`${urlIcon}/${item.weather_icon}.svg`"
           :alt="item.weather"
         />
-        <p><button @click="goToDetails(item)">Details</button></p>
+        <!--p><button @click="goToDetails(item)">Details</button></p-->
       </div>
     </div>
-    <LoginPrompt
-      v-if="showModal"
-      :show="showModal"
-      @close="showModal = false"
-    />
+    <LoginModal v-if="showModal" :show="showModal" @close="showModal = false" />
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import LoginPrompt from "@/components/LoginPrompt.vue";
-import ConvertToDate from "@/components/ConvertToDate.vue";
-import ConvertToDay from "@/components/ConvertToDay.vue";
-import ConvertToCelcius from "@/components/ConvertToCelcius.vue";
-import ConvertToFahrenheit from "@/components/ConvertToFahrenheit.vue";
+import axios from 'axios';
+import LoginModal from '@/components/LoginModal.vue';
 
 export default {
-  name: "WeatherView",
+  name: 'WeatherView',
   components: {
-    LoginPrompt,
-    ConvertToDate,
-    ConvertToDay,
-    ConvertToCelcius,
-    ConvertToFahrenheit,
+    LoginModal,
   },
   data() {
     return {
@@ -58,9 +53,9 @@ export default {
     this.fetchWeatherData();
   },
   watch: {
-    "$route.query.city": "fetchWeatherData",
-    "$route.query.lat": "fetchWeatherData",
-    "$route.query.lon": "fetchWeatherData",
+    '$route.query.city': 'fetchWeatherData',
+    '$route.query.lat': 'fetchWeatherData',
+    '$route.query.lon': 'fetchWeatherData',
   },
   computed: {
     userLoggedIn() {
@@ -68,9 +63,6 @@ export default {
     },
   },
   methods: {
-    getIconUrl(iconCode) {
-    return `http://localhost:8020/static/weather_icons/${iconCode}.png`;
-    },
     async fetchWeatherData() {
       try {
         const city = this.$route.query.city;
@@ -85,14 +77,14 @@ export default {
         this.urlIcon = response.data.url_icon;
         this.success = true;
       } catch (error) {
-        console.error("Request error:", error);
+        console.error('Request error:', error);
         this.success = false;
       }
     },
     goToDetails(item) {
       if (this.userLoggedIn) {
         this.$router.push({
-          name: "WeatherDetails",
+          name: 'weather-details',
           params: {
             itemCity: this.city,
             itemDt: item.dt,
@@ -111,18 +103,9 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-basis: 100vh;
-  margin-top: var(--margin-header-footer);
-}
-
 .main-item {
   background-color: var(--color-background-item);
-  border: 1px solid var(--color-light-grey);
-  border-radius: var(--default-radius);
+  border: 2px solid var(--color-light-grey);
   margin: 10px;
   padding: 20px;
   align-self: center;
@@ -145,7 +128,6 @@ export default {
 .weather-item {
   background-color: var(--color-background-item);
   border: 1px solid var(--color-light-grey);
-  border-radius: var(--default-radius);
   margin: 10px;
   padding: 20px;
   min-width: 200px;
@@ -154,12 +136,18 @@ export default {
   font-size: var(--font-size-medium);
 }
 
+.weather-item:hover {
+  border: solid 1px var(--color-black);
+  cursor: pointer;
+}
+
+
+
 button {
   height: 30px;
   width: 80px;
   background-color: var(--color-button);
   border: 0;
-  border-radius: var(--default-radius);
   font-family: var(--font-family);
   color: var(--color-white);
   cursor: pointer;

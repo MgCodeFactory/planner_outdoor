@@ -196,7 +196,6 @@ export default {
 .account-item {
   background-color: var(--color-background-item);
   border: 1px solid var(--color-light-grey);
-  border-radius: var(--default-radius);
   margin: 10px;
   padding: 20px;
   width: 350px;
@@ -220,7 +219,6 @@ button {
   row-gap: 50 px;
   border: 0;
   background-color: var(--color-button);
-  border-radius: var(--default-radius);
   font-family: var(--font-family);
   color: var(--color-white);
   cursor: pointer;
@@ -247,7 +245,6 @@ input[type="radio"] {
   display: inline-block;
   color: var(--color-dark-grey);
   padding: 5px;
-  border-radius: 4px;
   margin-top: 5px;
   font-size: var(--font-size-small);
   max-width: 300px;

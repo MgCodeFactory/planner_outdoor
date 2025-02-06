@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from po_app.validators_views import ValidationRulesView
 from po_app.auth_views import (
     CustomTokenObtainPairView,
     CustomPasswordResetView,
@@ -42,10 +43,15 @@ from po_app.weather import (
 urlpatterns = [
     # django admin console
     path("admin/", admin.site.urls),
+    # validators help messages endpoint
+    path("validators-rules/",
+         ValidationRulesView.as_view(),
+         name="validators-rules"
+         ),
     # authentification endpoints
     path("auth/login/",
          CustomTokenObtainPairView.as_view(),
-         name='token_obtain_pair',
+         name="token_obtain_pair",
          ),
     path("auth/register/",
          UsersViewSet.as_view({"post": "create"}),

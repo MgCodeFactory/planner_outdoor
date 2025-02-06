@@ -208,7 +208,6 @@ export default {
 .details-item {
   background-color: var(--color-background-item);
   border: 1px solid var(--color-light-grey);
-  border-radius: var(--default-radius);
   margin: 10px;
   padding: 20px;
   min-width: 200px;

@@ -2,7 +2,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import WeatherView from "../views/WeatherView.vue";
 import WeatherDetailsView from "../views/WeatherDetailsView.vue";
-import CreateAccountView from "../views/CreateAccountView.vue";
+import RegisterView from "../views/RegisterView.vue";
+import PasswordResetConfirmView from "../views/PasswordResetConfirmView.vue";
 import AccountManagerView from "../views/AccountManagerView.vue";
 
 
@@ -18,9 +19,14 @@ const routes = [
     component: WeatherView,
   },
   {
-    path: "/login",
-    name: "login",
-    component: CreateAccountView,
+    path: "/register",
+    name: "register",
+    component: RegisterView,
+  },
+  {
+    path: "/auth/password-reset-confirm/:uid/:token",
+    name: "password-reset-confirm",
+    component: PasswordResetConfirmView,
   },
   {
     path: "/account",

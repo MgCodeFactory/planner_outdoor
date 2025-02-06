@@ -1,18 +1,17 @@
 <template>
-  <div class="home-container">
-    <div class="home-item">
-      <h2>Welcome to PlannerOutdoor !</h2>
-      <h3>
-        This project enables users with an account to plan their outdoor
-        activities, taking into account weather conditions and any allergies
-        they may have.
-      </h3>
-      <h3>
-        This project is not yet complete, and unfortunately not all features
-        have been implemented.
-      </h3>
+  <div class="standard-container">
+    <div class="standard-item">
+      <article class="prose">
+        <h2>Welcome to PlannerOutdoor !</h2>
+        <p>
+          This project enables users with an account to plan their outdoor
+          activities, taking into account weather conditions and any allergies
+          they may have.
+        </p>
+        <p>Take a look around and see if you like it !</p>
+      </article>
     </div>
-    <div class="home-item">
+    <!--div class="home-item">
       <h2>Core technologies</h2>
       <div class="logo-container">
         <a
@@ -88,97 +87,12 @@
           <img src="/images/screen_capture_api_django-admin.png" alt="admin" />
         </a>
       </div>
-    </div>
-    <div class="home-item">
-      <h2>To implement</h2>
-      <h3>- Full test process (back & front)</h3>
-      <h3>- Fetch an allergens API</h3>
-      <h3>- Business logic for planification</h3>
-      <h3>- Include weather map</h3>
-      <h3>- Email alerts</h3>
-    </div>
+    </div-->
   </div>
 </template>
 
 <script>
 export default {
-  name: "HomeView",
+  name: 'HomeView',
 };
 </script>
-
-<style scoped>
-.home-container {
-  order: 1; /* item of app-container*/
-  display: flex;
-  flex-direction:row;
-  flex-grow: 1;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  background-color: var(--color-medium-grey);
-  color: var(--color-white);
-  /*display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: stretch;
-  margin-top: var(--header-footer-height);
-  gap: 50px;
-  flex-wrap: wrap;*/
-}
-
-.home-item {
-  background-color: var(--color-background-item);
-  border-radius: var(--default-radius);
-  margin-top: 50px;
-  padding: 20px;
-  flex-basis: 500px;
-  margin-bottom: var(--header-footer-height);
-}
-
-.logo-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.logo-item {
-  padding: 10px;
-}
-
-.logo-item img {
-  min-width: 60px;
-  height: 60px;
-}
-
-.api-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.api-item {
-  padding: 10px;
-}
-
-.api-item img {
-  min-width: 150px;
-  height: 150px;
-}
-
-h1,
-h2 {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-h3 {
-  text-align: justify;
-  margin-bottom: 50px;
-}
-</style>

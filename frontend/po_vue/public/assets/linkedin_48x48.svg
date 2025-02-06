@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 48 48"
+   version="1.1"
+   id="svg6"
+   width="48"
+   height="48"
+   sodipodi:docname="linkedin_48x48.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview258"
+     pagecolor="#80837e"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="17.208333"
+     inkscape:cx="24.029056"
+     inkscape:cy="24"
+     inkscape:window-width="1920"
+     inkscape:window-height="1032"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <defs
+     id="defs10" />
+  <path
+     id="path2"
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.377803;stroke-opacity:1"
+     d="M 4.2761849,0.66937884 A 3.3662188,3.3662188 0 0 0 0.87596432,3.9943346 V 43.444425 a 3.3662188,3.3662188 0 0 0 3.40022058,3.31684 H 43.567629 A 3.3737749,3.3737749 0 0 0 46.96785,43.432619 V 3.9825282 A 3.3737749,3.3737749 0 0 0 43.567629,0.66937884 Z M 11.121639,6.990189 A 3.9669245,3.9669245 0 1 1 7.1547147,10.953424 3.9669245,3.9669245 0 0 1 11.121639,6.990189 Z m 20.832257,10.423507 c 6.92889,-0.01511 8.213512,4.54485 8.213512,10.457451 v 12.089676 h -6.841766 v -10.71055 c 0,-2.550164 -0.04539,-5.833061 -3.555179,-5.833061 -3.50978,0 -4.107124,2.780628 -4.107124,5.667035 V 39.960823 H 18.832643 V 17.946457 h 6.55915 v 3.022418 h 0.09077 c 0.914281,-1.730333 3.142906,-3.555179 6.471342,-3.555179 z M 7.6992806,17.946457 H 14.541045 V 39.960823 H 7.6992806 Z" />
+</svg>

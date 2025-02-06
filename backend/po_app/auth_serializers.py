@@ -70,13 +70,23 @@ class CustomPasswordResetConfirmSerializer(serializers.Serializer):
         validators=[CustomPasswordValidator()],
     )
 
+    confirm_password = serializers.CharField(
+        write_only=True,
+        required=True,
+    )
+
     def validate(self, data):
         """
         Verify token and uid and then set new password.
         """
         new_password = data.get("new_password")
+        confirm_password = data.get("confirm_password")
         token = self.context.get("kwargs").get("token")
         uid = self.context.get("kwargs").get("uid")
+
+        if new_password != confirm_password:
+            raise serializers.ValidationError(
+                "The two password do not match !")
 
         if token is None or uid is None:
             raise serializers.ValidationError("Missing token or user ID.")
@@ -92,4 +102,4 @@ class CustomPasswordResetConfirmSerializer(serializers.Serializer):
 
     class Meta:
         model = Users
-        fields = ["new_password"]
+        fields = ["new_password", "confirm_password"]
