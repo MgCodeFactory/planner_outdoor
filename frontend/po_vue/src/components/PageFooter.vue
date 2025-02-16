@@ -14,7 +14,7 @@
           href="https://github.com/MgCodeFactory/planner_outdoor"
           target="_blank"
         >
-          <img src="/assets/github_48x48.svg" alt="github project" class="svg-footer"/>
+          <img src="/assets/github_48x48.svg" alt="github project link" class="svg-footer"/>
         </a>
       </button>
       <button class="footer-button">
@@ -22,7 +22,7 @@
           href="https://www.linkedin.com/in/emmanuel-mg197274470/"
           target="_blank"
         >
-          <img src="/assets/linkedin_48x48.svg" alt="linkedin" class="svg-footer"/>
+          <img src="/assets/linkedin_48x48.svg" alt="linkedin profile page" class="svg-footer"/>
         </a>
       </button>
     </nav>

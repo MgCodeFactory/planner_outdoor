@@ -210,11 +210,10 @@ class UsersTestCase(BaseLocationTestCase):
         with self.assertRaises(IntegrityError):
             Users.objects.create_user(
                 username=self.valid_username,
-                email=self.valid_email,
+                email="another_email@example.com",
                 password=self.valid_password,
                 location=self.valid_location,
             )
-            self.assertFalse(Users.objects.get(username=self.valid_username))
 
     def test_email_uniqueness(self):
         """
@@ -228,12 +227,11 @@ class UsersTestCase(BaseLocationTestCase):
         )
         with self.assertRaises(IntegrityError):
             Users.objects.create_user(
-                username=self.valid_username,
+                username="another username",
                 email=self.valid_email,
                 password=self.valid_password,
                 location=self.valid_location,
             )
-            self.assertFalse(Users.objects.get(username=self.valid_username))
 
     def test_invalid_email(self):
         """

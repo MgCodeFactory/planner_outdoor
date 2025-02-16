@@ -5,10 +5,9 @@ from rest_framework import status, response
 from datetime import datetime
 import requests
 import os
-import logging
+
 
 weather_client = MeteoFranceClient()
-logger = logging.getLogger(__name__)
 
 
 class CustomConvertion():

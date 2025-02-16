@@ -207,6 +207,18 @@ class ActivitiesViewsetTest(APITestCase):
         self.assertEqual(response.data["description"],
                          "updated activity description 3")
 
+    def test_activity_partial_update_duplicated_values(self):
+        """
+        Test it's not possible to update an activity with duplicated values.
+        """
+        self.client.force_authenticate(user=self.staff_user)
+        url = reverse("activity-detail", kwargs={"pk": self.activity_1.id})
+        response = self.client.patch(url, {"name": "testactivity 2"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.patch(
+            url, {"description": "test activity description 2"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_users_destroy_unauthenticated(self):
         """
         Test that unauthenticated users can't delete activity.

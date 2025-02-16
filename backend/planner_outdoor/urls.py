@@ -25,9 +25,7 @@ from po_app.auth_views import (
 from po_app.views import (
     UsersViewSet,
     ActivitiesViewSet,
-    AllergensViewSet,
     UserActivitiesViewSet,
-    UserAllergensViewSet,
     PlannedActivitiesViewSet,
 )
 from drf_spectacular.views import (
@@ -105,27 +103,6 @@ urlpatterns = [
         name="activity-detail",
     ),
     path(
-        "allergens-list/",
-        AllergensViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="allergens-list",
-    ),
-    path(
-        "allergen-detail/<int:pk>/",
-        AllergensViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="allergen-detail",
-    ),
-    path(
         "user-activities-list/",
         UserActivitiesViewSet.as_view(
             {
@@ -145,27 +122,6 @@ urlpatterns = [
             }
         ),
         name="user-activity-detail",
-    ),
-    path(
-        "user-allergens-list/",
-        UserAllergensViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="user-allergens-list",
-    ),
-    path(
-        "user-allergen-detail/<int:pk>",
-        UserAllergensViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "delete": "destroy",
-            }
-        ),
-        name="user-allergen-detail",
     ),
     path(
         "planned-activities-list/",

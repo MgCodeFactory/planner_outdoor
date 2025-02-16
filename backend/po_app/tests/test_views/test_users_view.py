@@ -199,6 +199,18 @@ class UsersViewsetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["username"], "updated_unauth_user")
 
+    def test_users_update_duplicated_values(self):
+        """
+        Test that it's not possible to update user with duplicated values.
+        """
+        self.client.force_authenticate(user=self.staff_user)
+        url = reverse("user-detail", kwargs={"pk": self.auth_user.pk})
+        response = self.client.patch(
+            url, {"username": self.staff_user.username})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.patch(url, {"email": self.staff_user.email})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_users_destroy_unauthenticated(self):
         """
         Test that unauthenticated users can't delete user.

@@ -1,260 +1,177 @@
 <template>
-  <div class="account-item">
-    <h3>Your prefered activities</h3>
-    <div v-if="!errorActivitiesMsg">
-      <div
-        v-for="activity in activitiesList"
-        :key="activity.activity_id"
-        class="checkbox-container"
-      >
-        <label>
-          <input
-            type="checkbox"
-            :value="activity.activity_id"
-            v-model="activity.isChecked"
-          />
-          <span
-            @mouseover="showActivityDesc(activity)"
-            @mouseleave="hideActivityDesc(activity)"
-          >
-            {{ activity.activity_name }}
-          </span>
-        </label>
-        <p v-if="activity.showDescription" class="description">
-          {{ activity.activity_desc }}
-        </p>
-      </div>
-      <p v-if="successUpdateActivitiesMsg" class="success">
-        {{ successUpdateActivitiesMsg }}
-      </p>
-      <p v-else class="error">
-        {{ errorUpdateActivitiesMsg }}
-      </p>
-      <div class="button-container">
-        <button v-if="!isValidate" @click="updateSelectedActivities">
-          {{ buttonText }}
-        </button>
-        <button v-else @click="clearMessages">{{ buttonText }}</button>
-      </div>
+  <div class="multiselect-container">
+    <div>
+      <h3 class="font-bold">YOUR FAVORITE ACTIVITIES</h3>
     </div>
-    <div v-else>
-      <p class="error">{{ errorActivitiesMsg }}</p>
-      <div class="button-container">
-        <button @click="clearMessages">Ok</button>
-      </div>
+    <div>
+      <vue-multiselect
+        v-model="selectedActivities"
+        :options="activitiesList"
+        :multiple="true"
+        :taggable="false"
+        :close-on-select="false"
+        :clear-on-select="false"
+        :preserve-search="true"
+        placeholder="Select activities"
+        label="name"
+        track-by="id"
+        @update="saveUserActivities"
+      >
+        <template v-slot:option="{ option }">
+          <div>
+            <span>{{ option.name }}</span>
+            <span class="activity-description">{{ option.description }}</span>
+          </div>
+        </template>
+        Select activities
+      </vue-multiselect>
+    </div>
+    <div>
+      <p v-if="successMsg" class="success-message">{{ successMsg }}</p>
+      <p v-if="errorMsg" class="error-message">{{ errorMsg }}</p>
+    </div>
+    <div>
+      <button
+        type="button"
+        v-if="!successMsg"
+        @click="saveUserActivities"
+        class="classic-button"
+      >
+        SAVE CHANGES
+      </button>
+      <button
+        type="button"
+        v-else
+        @click="clearMessages"
+        class="classic-button"
+      >
+        OK
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
+import VueMultiselect from 'vue-multiselect';
 
 export default {
-  name: "FetcActivities",
-  props: {
-    userIdUrl: {
-      type: String,
-      required: true,
-    },
+  name: 'FethcActivities',
+  components: {
+    VueMultiselect,
   },
   data() {
     return {
-      errorActivitiesMsg: "",
-      successUpdateActivitiesMsg: "",
-      errorUpdateActivitiesMsg: "",
-      fetchError: false,
-      buttonText: "Validate",
-      isValidate: false,
       activitiesList: [],
       selectedActivities: [],
+      successMsg: '',
+      errorMsg: '',
     };
   },
   mounted() {
-    this.fetchSelectedActivities();
+    this.fetchActivitiesList();
   },
   methods: {
-    async fetchSelectedActivities() {
-      try {
-        const response = await axios.get(
-          "http://localhost:8020/po_app/UserActivities/GetUserActivities",
-          {
-            headers: {
-              Authorization: `Bearer ${this.$store.getters.getAccessToken}`,
-            },
-          }
-        );
-        this.selectedActivities = response.data.data.map((item) => ({
-          user_activity_id: item.user_activity_id,
-          activity_id: item.activity_id,
-        }));
-        this.fetchActivitiesList();
-      } catch (error) {
-        this.errorActivitiesMsg =
-          error.response?.data?.error || "An unexpected error occurred";
-        console.error("Error:", error);
-      }
-    },
     async fetchActivitiesList() {
       try {
         const response = await axios.get(
-          "http://localhost:8020/po_app/Activities/",
+          'http://localhost:8020/activities-list/',
           {
             headers: {
               Authorization: `Bearer ${this.$store.getters.getAccessToken}`,
             },
           }
         );
-        this.activitiesList = response.data.map((activity) => {
-          const isSelected = this.selectedActivities.find(
-            (selected) => selected.activity_id === activity.url
-          );
-          return {
-            ...activity,
-            isChecked: !!isSelected,
-            userActivityId: isSelected ? isSelected.user_activity_id : null,
-          };
-        });
+        this.activitiesList = response.data;
+        this.fetchSelectedActivities();
       } catch (error) {
-        this.errorActivitiesMsg =
-          error.response?.error || "An unexpected error occurred";
-        console.error("Error:", error);
+        this.errorMsg = `Error fetching activities list: ${error}`;
       }
     },
-    async updateSelectedActivities() {
-      for (const activity of this.activitiesList) {
-        const isChecked = activity.isChecked;
-        const selectedActivity = this.selectedActivities.find(
-          (selected) => selected.activity_id === activity.url
+    async fetchSelectedActivities() {
+      try {
+        const response = await axios.get(
+          'http://localhost:8020/user-activities-list/',
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.getters.getAccessToken}`,
+            },
+          }
         );
-        const isAlreadySelected = !!selectedActivity;
-        if (isChecked && isAlreadySelected) {
-          continue;
-        }
-        if (!isChecked && isAlreadySelected) {
-          try {
-            await axios.delete(
-              `http://localhost:8020/po_app/UserActivities/DeleteUserActivities/${selectedActivity.user_activity_id}/`
-            );
-            continue;
-          } catch (error) {
-            this.fetchError = true;
-            this.errorUpdateActivitiesMsg =
-              error.response?.error || "An unexpected error occurred";
-            console.error("Error:", error);
-          }
-        }
-        if (isChecked && !isAlreadySelected) {
-          try {
-            await axios.post(
-              "http://localhost:8020/po_app/UserActivities/PostUserActivities/",
-              {
-                user_id: this.userIdUrl,
-                activity_id: activity.url,
-              }
-            );
-          } catch (error) {
-            this.fetchError = true;
-            let errorsSerializer = "";
-            if (error.response?.data?.errors) {
-              errorsSerializer = Object.values(error.response.data.errors)
-                .flat()
-                .join("\n");
+        this.currentDbActivities = response.data;
+        this.selectedActivities = this.activitiesList.filter((activity) =>
+          response.data.some(
+            (userActivity) => userActivity.activity === activity.id
+          )
+        );
+      } catch (error) {
+        this.errorMsg = `Error fetching selected activities: ${error}`;
+      }
+    },
+    async saveUserActivities() {
+      const userId = this.$store.getters.getUserId;
+      const activitiesToDelete = this.currentDbActivities.filter(
+        (dbActivity) =>
+          !this.selectedActivities.some(
+            (selected) => selected.id === dbActivity.activity
+          )
+      );
+      const activitiesToCreate = this.selectedActivities.filter(
+        (selected) =>
+          !this.currentDbActivities.some(
+            (dbActivity) => dbActivity.activity === selected.id
+          )
+      );
+      for (const activityToDelete of activitiesToDelete) {
+        try {
+          await axios.delete(
+            `http://localhost:8020/user-activity-detail/${activityToDelete.id}/`,
+            {
+              headers: {
+                Authorization: `Bearer ${this.$store.getters.getAccessToken}`,
+              },
             }
-            this.errorUpdateActivitiesMsg =
-              errorsSerializer ||
-              error.response?.data?.error ||
-              "An unexpected error occurred";
-            console.error("Error:", error);
-          }
+          );
+        } catch (error) {
+          this.errorMsg = `Error deleting user activity: ${error}`;
         }
       }
-      if (!this.fetchError) {
-        this.successUpdateActivitiesMsg = "Activities validation is sucessfull";
+      for (const activityToCreate of activitiesToCreate) {
+        try {
+          await axios.post(
+            'http://localhost:8020/user-activities-list/',
+            {
+              user: userId,
+              activity: activityToCreate.id,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${this.$store.getters.getAccessToken}`,
+              },
+            }
+          );
+        } catch (error) {
+          this.errorMsg = `Error creating user activity: ${error}`;
+        }
       }
-      this.isValidate = true;
-      this.buttonText = "Ok";
-      await this.fetchSelectedActivities();
-    },
-    showActivityDesc(activity) {
-      activity.showDescription = true;
-    },
-    hideActivityDesc(activity) {
-      activity.showDescription = false;
+      this.successMsg = 'User activities updated successfully.';
     },
     clearMessages() {
-      this.successUpdateActivitiesMsg = "";
-      this.errorUpdateActivitiesMsg = "";
-      this.errorActivitiesMsg = "";
-      this.isValidate = false;
-      this.buttonText = "Validate";
+      this.successMsg = '';
+      this.errorMsg = '';
     },
   },
 };
 </script>
 
-<style scoped>
-.account-item {
-  background-color: var(--color-background-item);
-  border: 1px solid var(--color-light-grey);
-  margin: 10px;
-  padding: 20px;
-  width: 350px;
-  min-height: 100px;
-  text-align: center;
-  font-size: var(--font-size-medium);
+<style scoped lang="postcss">
+.multiselect-container {
+  @apply flex flex-col justify-start items-center gap-y-3;
 }
 
-.button-container {
-  display: flex;
-  flex-direction: row;
-  padding-top: 1em;
-  gap: 50px;
-  justify-content: center;
-  align-items: center;
-}
-
-button {
-  height: 40px;
-  width: 90px;
-  row-gap: 50 px;
-  border: 0;
-  background-color: var(--color-button);
-  font-family: var(--font-family);
-  color: var(--color-white);
-  cursor: pointer;
-}
-
-.checkbox-container {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-  margin-left: 40px;
-  align-items: flex-start;
-  vertical-align: top;
-  width: 100%;
-}
-
-input[type="checkbox"],
-input[type="radio"] {
-  display: inline;
-  width: auto;
-  margin-right: 15px;
-}
-
-.description {
-  display: inline-block;
-  color: var(--color-dark-grey);
-  padding: 5px;
-  margin-top: 5px;
-  font-size: var(--font-size-small);
-  max-width: 300px;
-}
-
-.success {
-  color: var(--color-success-msg);
-}
-
-.error {
-  color: var(--color-error-msg);
+.activity-description {
+  @apply font-extralight italic text-wrap ml-3 p-2;
 }
 </style>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>

@@ -58,11 +58,6 @@ export default createStore({
       state.email = "";
       state.accessToken = null;
     },
-    clearUserData(state) {
-      state.accessToken = null;
-      state.user = null;
-      state.isAuthenticated = false;
-    },
   },
   actions: {
     login({ commit }, { email, userId, token }) {

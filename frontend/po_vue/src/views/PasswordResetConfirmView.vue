@@ -14,7 +14,9 @@
           v-on:focus="passwordHelp"
           v-on:focusout="showHelp = false"
         />
-        <p v-show="showHelp" class="text-center text-sm italic">{{ passwordRules }}</p>
+        <p v-show="showHelp" class="text-center text-sm italic">
+          {{ passwordRules }}
+        </p>
         <input
           v-model="confirmPassword"
           type="password"
@@ -24,11 +26,26 @@
         <p v-if="recoveryMsg" class="recovery-message">{{ recoveryMsg }}</p>
         <p v-if="errorMsg" class="error-message">{{ errorMsg }}</p>
         <div v-show="!recoveryMsg">
-          <button v-if="!errorMsg" class="classic-button">SUBMIT</button>
-          <button v-else @click="clearForm" class="classic-button">RETRY</button>
+          <button v-if="!errorMsg" type="submit" class="classic-button">
+            SUBMIT
+          </button>
+          <button
+            v-else
+            @click="clearForm"
+            type="button"
+            class="classic-button"
+          >
+            RETRY
+          </button>
         </div>
         <div v-show="recoveryMsg">
-          <button @click="this.$router.push('/')" class="classic-button">OK</button>
+          <button
+            @click="this.$router.push('/')"
+            type="button"
+            class="classic-button"
+          >
+            OK
+          </button>
         </div>
       </form>
     </div>
@@ -112,13 +129,5 @@ export default {
 <style scoped lang="postcss">
 .reset-input {
   @apply bg-zinc-100 border border-zinc-300 focus:ring-2 rounded-md font-bold p-2;
-}
-
-.error-message {
-  @apply text-red-700 font-semibold;
-}
-
-.recovery-message {
-  @apply text-green-700 font-semibold;
 }
 </style>

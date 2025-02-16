@@ -1,7 +1,7 @@
 <template>
   <img
     src="/assets/po_logo_color_640x480.svg"
-    alt="planner_outdoor"
+    alt="planner outdoor logo"
     class="background-logo"
   />
   <div class="app-container">
@@ -27,11 +27,11 @@ export default {
 
 <style lang="postcss">
 .background-logo {
-  @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-40 max-w-[50%] max-h-[50%];
+  @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-40 w-[50vw] h-[50vw] sm:w-[40vw] sm:h-[40vw];
 }
 
 .app-container {
-  @apply flex flex-col min-h-screen bg-gradient-to-b from-green-600 to-green-200;
+  @apply flex flex-col min-h-screen min-w-full bg-gradient-to-b from-green-600 to-green-200;
 }
 
 .app-header,
@@ -68,11 +68,11 @@ export default {
 }
 
 .modal-background {
-  @apply fixed inset-0 bg-gray-800 bg-opacity-80 flex items-center justify-center;
+  @apply fixed inset-0 bg-gray-800 bg-opacity-80 flex items-center justify-center z-40;
 }
 
 .modal-container {
-  @apply bg-white rounded-md p-8 max-w-sm md:max-w-lg;
+  @apply bg-white rounded-md p-8 max-w-sm md:max-w-lg z-50;
 }
 
 .form-container {
@@ -84,6 +84,22 @@ export default {
 }
 
 .standard-item {
-  @apply bg-zinc-300 border border-b-gray-500 rounded-md opacity-100 hover:ring-4 hover:border-black hover:ring-black p-2 max-w-sm md:max-w-lg;
+  @apply z-20 opacity-100 bg-zinc-200 border border-b-gray-400 rounded-md  hover:ring-2 hover:border-black hover:ring-black p-2 max-w-sm md:max-w-lg;
+}
+
+.error-message {
+  @apply text-red-700 font-semibold max-w-full;
+}
+
+.success-message {
+  @apply text-green-700 font-semibold max-w-full;
+}
+
+.weather-container {
+  @apply flex flex-row flex-wrap justify-center items-center gap-5 max-w-fit;
+}
+
+.weather-item {
+  @apply z-20 opacity-100 bg-zinc-200 border border-b-gray-400 rounded-md hover:ring-2 hover:border-black hover:ring-black p-2 max-w-sm md:max-w-lg;
 }
 </style>

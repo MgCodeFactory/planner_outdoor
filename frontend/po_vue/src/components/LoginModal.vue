@@ -58,7 +58,7 @@
             required
           />
           <p v-if="errorMsg" class="error-message">{{ errorMsg }}</p>
-          <p v-if="successMsg" class="sucess-message">{{ successMsg }}</p>
+          <p v-if="successMsg" class="success-message">{{ successMsg }}</p>
           <div
             v-if="showLoginForm || showResetForm"
             class="flex flex-row justify-center items-center gap-2"
@@ -136,9 +136,13 @@ export default {
           password: this.loginPassword,
         });
         const token = response.data.access;
-        this.$store.dispatch('login', { email: this.loginEmail, token });
-        const nextRoute = this.$route.query.next || '/account';
-        this.$router.push(nextRoute);
+        const userId = response.data.user.user_id;
+        this.$store.dispatch('login', {
+          email: this.loginEmail,
+          userId,
+          token,
+        });
+        this.$router.push('/account');
         this.$emit('close');
       } catch (error) {
         if (error.response) {
@@ -201,13 +205,5 @@ export default {
 <style scoped lang="postcss">
 .login-input {
   @apply bg-zinc-100 border border-zinc-300 focus:ring-2 rounded-md font-bold p-2;
-}
-
-.error-message {
-  @apply text-red-700 font-semibold max-w-full;
-}
-
-.sucess-message {
-  @apply text-green-700 font-semibold max-w-full;
 }
 </style>

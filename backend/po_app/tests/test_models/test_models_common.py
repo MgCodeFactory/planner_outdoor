@@ -8,7 +8,6 @@ from ...validators import (
 )
 from ...models import (
     Activities,
-    Allergens,
 )
 
 
@@ -107,7 +106,7 @@ class BaseLocationTestCase(TestCase):
             "name": "London",
             "lat": "",
             "lon": -0.1276474,
-            "country": "GB", ,
+            "country": "GB",
         }
         self.invalid_location_lat_out_of_range = {
             "name": "London",
@@ -131,7 +130,7 @@ class BaseLocationTestCase(TestCase):
             "name": "London",
             "lat": 51.5073219,
             "lon": "longitude",
-            "country": "GB", ,
+            "country": "GB",
         }
         self.invalid_location_lon_null = {
             "name": "London",
@@ -369,20 +368,16 @@ class BaseNameDescriptionTestCase(TestCase):
         """
         # data for name
         self.valid_activity_name = "Test activity"
-        self.valid_allergen_name = "Test allergen"
         self.invalid_name_len = "x" * 51
         self.existing_activity_name = self.valid_activity_name
-        self.existing_allergen_name = self.valid_allergen_name
         self.invalid_name_type = 123
         self.invalid_name_null = None
         self.invalid_name_blank = "   "
         self.invalid_name_bad_special = "Test invalid_special character #"
         # data for description
         self.valid_activity_description = "This is a test activity description."
-        self.valid_allergen_description = "This is a test allergen description."
         self.invalid_description_len = "x" * 201
         self.existing_activity_description = self.valid_activity_description
-        self.existing_allergen_description = self.valid_allergen_description
         self.invalid_description_type = 123
         self.invalid_description_null = None
         self.invalid_description_blank = " "
@@ -420,13 +415,6 @@ class BaseNameDescriptionTestCase(TestCase):
         with self.assertRaises(ValidationError):
             activity.full_clean()
 
-        allergen = Allergens(
-            name=self.invalid_name_len,
-            description=self.valid_allergen_description,
-        )
-        with self.assertRaises(ValidationError):
-            allergen.full_clean()
-
     def test_invalid_name_null(self):
         """
         Test invalid name null value.
@@ -437,13 +425,6 @@ class BaseNameDescriptionTestCase(TestCase):
         )
         with self.assertRaises(ValidationError):
             activity.full_clean()
-
-        allergen = Allergens(
-            name=self.invalid_name_null,
-            description=self.valid_allergen_description,
-        )
-        with self.assertRaises(ValidationError):
-            allergen.full_clean()
 
     def test_invalid_description_type(self):
         """
@@ -477,13 +458,6 @@ class BaseNameDescriptionTestCase(TestCase):
         with self.assertRaises(ValidationError):
             activity.full_clean()
 
-        allergen = Allergens(
-            name=self.valid_allergen_name,
-            description=self.invalid_description_len,
-        )
-        with self.assertRaises(ValidationError):
-            allergen.full_clean()
-
     def test_invalid_description_null(self):
         """
         Test invalid description null value.
@@ -495,9 +469,3 @@ class BaseNameDescriptionTestCase(TestCase):
         with self.assertRaises(ValidationError):
             activity.full_clean()
 
-        allergen = Allergens(
-            name=self.valid_allergen_name,
-            description=self.invalid_description_null,
-        )
-        with self.assertRaises(ValidationError):
-            allergen.full_clean()

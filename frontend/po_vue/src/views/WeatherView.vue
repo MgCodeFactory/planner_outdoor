@@ -1,34 +1,48 @@
 <template>
-  <div class="router-container">
-    <div class="main-item">
+  <div class="standard-container">
+    <div class="standard-item">
       <h2 v-if="success">Weather at {{ city }}</h2>
       <h3 v-else>No weather data or bad city name</h3>
     </div>
     <div v-show="success" class="weather-container">
-      <div
-        v-for="(item, index) in forecast"
-        :key="index"
-        class="weather-item"
-        @click="goToDetails(item)"
-      >
-        <p>
-          {{ item.date.year }} - {{ item.date.month }} - {{ item.date.day }}
-        </p>
-        <p>
-          MIN: {{ item.temperature.min_C }} °C / {{ item.temperature.min_F }} °F
-        </p>
-        <p>
-          MAX: {{ item.temperature.max_C }} °C / {{ item.temperature.max_F }} °F
-        </p>
-        <img
-          v-if="item.weather_icon"
-          :src="`${urlIcon}/${item.weather_icon}.svg`"
-          :alt="item.weather"
-        />
-        <!--p><button @click="goToDetails(item)">Details</button></p-->
+      <div class="weather-item">
+        <div
+          v-for="(item, index) in forecast"
+          :key="index"
+          @click="goToDetails(item)"
+        >
+          <p>
+            {{ item.date.year }} - {{ item.date.month }} - {{ item.date.day }}
+          </p>
+          <p>
+            MIN: {{ item.temperature.min_C }} °C /
+            {{ item.temperature.min_F }} °F
+          </p>
+          <p>
+            MAX: {{ item.temperature.max_C }} °C /
+            {{ item.temperature.max_F }} °F
+          </p>
+          <img
+            v-if="item.weather_icon"
+            :src="`${urlIcon}/${item.weather_icon}.svg`"
+            :alt="item.weather"
+            class="object-center"
+          />
+          <button
+            type="button"
+            class="classic-button"
+            @click="goToDetails(item)"
+          >
+            Details
+          </button>
+        </div>
       </div>
+      <LoginModal
+        v-if="showModal"
+        :show="showModal"
+        @close="showModal = false"
+      />
     </div>
-    <LoginModal v-if="showModal" :show="showModal" @close="showModal = false" />
   </div>
 </template>
 
@@ -102,54 +116,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.main-item {
-  background-color: var(--color-background-item);
-  border: 2px solid var(--color-light-grey);
-  margin: 10px;
-  padding: 20px;
-  align-self: center;
-  text-align: center;
-  flex-grow: 1;
-}
-
-.weather-container {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 20px;
-  flex-grow: 19;
-  margin-bottom: var(--margin-header-footer);
-  padding-bottom: 20px;
-}
-
-.weather-item {
-  background-color: var(--color-background-item);
-  border: 1px solid var(--color-light-grey);
-  margin: 10px;
-  padding: 20px;
-  min-width: 200px;
-  max-height: 330px;
-  text-align: center;
-  font-size: var(--font-size-medium);
-}
-
-.weather-item:hover {
-  border: solid 1px var(--color-black);
-  cursor: pointer;
-}
-
-
-
-button {
-  height: 30px;
-  width: 80px;
-  background-color: var(--color-button);
-  border: 0;
-  font-family: var(--font-family);
-  color: var(--color-white);
-  cursor: pointer;
-}
-</style>
+<style scoped lang="postcss"></style>

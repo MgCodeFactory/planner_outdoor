@@ -55,6 +55,11 @@ export default {
       selections: [],
     };
   },
+  computed: {
+    userLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+  },
   methods: {
     async fetchSelections() {
       if (this.city.length > 3) {
@@ -73,31 +78,37 @@ export default {
     },
     selectCity(selection) {
       if (selection && selection.name && selection.country) {
-        this.city = `${selection.name}, ${selection.country}`;
+        this.userSelection = {
+          name: selection.name,
+          country: selection.country,
+          lat: selection.lat,
+          lon: selection.lon,
+        };
+        this.city = `${this.userSelection.name}, ${this.userSelection.country}`;
         this.selections = [];
-        console.log(`route name: ${this.route.name}`)
-        if (this.route.name === 'register') {
-          this.$emit('location-selected', {
-            name: selection.name,
-            lat: selection.lat,
-            lon: selection.lon,
-            country: selection.country,
-          });
-        } else {
-          this.$router.push({
-            name: 'weather',
-            query: {
-              city: this.city,
-              lat: selection.lat,
-              lon: selection.lon,
-            },
-          });
-        }
-        this.city = '';
+        this.selectedRoute();
         this.$emit('close');
       } else {
         console.error('Invalid selection object:', selection);
       }
+    },
+    selectedRoute() {
+      if (this.route.name === 'register' || this.route.name === 'account') {
+        this.$emit('location-selected', this.userSelection);
+      } else {
+        this.$router.push('/');
+        this.goToWeather();
+      }
+    },
+    goToWeather() {
+      this.$router.push({
+        path: 'weather',
+        query: {
+          city: this.city,
+          lat: this.userSelection.lat,
+          lon: this.userSelection.lon,
+        },
+      });
     },
   },
 };

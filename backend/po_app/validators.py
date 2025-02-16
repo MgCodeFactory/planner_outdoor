@@ -143,7 +143,7 @@ class CustomLocationValidator:
 @deconstructible
 class CustomNameValidator:
     """
-    Custom name validator for Activities and Allergens.
+    Custom name validator for Activities.
     """
 
     def __call__(self, name):
@@ -171,7 +171,7 @@ class CustomNameValidator:
 @deconstructible
 class CustomDescriptionValidator:
     """
-    Custom description validator for Activities and Allergens.
+    Custom description validator for Activities.
     """
 
     def __call__(self, description):

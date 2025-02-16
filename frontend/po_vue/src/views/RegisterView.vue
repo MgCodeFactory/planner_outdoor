@@ -26,7 +26,7 @@
           type="password"
           v-model="password"
           placeholder="Password"
-          requiredt
+          required
           class="register-input"
           v-on:focus="passwordHelp"
           v-on:focusout="showHelpPassword = false"
@@ -42,7 +42,7 @@
           readonly
           required
         />
-        <p v-if="successMsg" class="sucess-message">{{ successMsg }}</p>
+        <p v-if="successMsg" class="success-message">{{ successMsg }}</p>
         <p v-if="errorMsg" class="error-message">{{ errorMsg }}</p>
         <button
           v-show="!successMsg"
@@ -177,13 +177,5 @@ export default {
 <style scoped lang="postcss">
 .register-input {
   @apply bg-zinc-100 border border-zinc-300 focus:ring-2 rounded-md font-bold p-2;
-}
-
-.error-message {
-  @apply text-red-700 font-semibold max-w-full;
-}
-
-.sucess-message {
-  @apply text-green-700 font-semibold max-w-full;
 }
 </style>

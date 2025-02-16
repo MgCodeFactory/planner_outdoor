@@ -90,6 +90,6 @@ class CustomPasswordResetConfirmView(GenericAPIView):
             data=request.data, context={"kwargs": kwargs},)
         serializer.is_valid(raise_exception=True)
         return response.Response(
-            {"message": "Password reset completed sucessfully."},
+            {"message": "Password reset completed successfully."},
             status=status.HTTP_200_OK,
         )

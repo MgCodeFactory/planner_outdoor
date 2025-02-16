@@ -98,7 +98,7 @@ DATABASES = {
         'HOST': os.environ.get('MYSQL_HOST'),
         'PORT': os.environ.get('MYSQL_PORT'),
         'TEST': {
-            'NAME': 'test_po_db',
+            'NAME': os.environ.get('MYSQL_TEST_DATABASE'),
         },
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -143,7 +143,7 @@ REST_FRAMEWORK = {
 
 # JSON Web Token minimal configuration
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=45),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=5),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "id",
@@ -208,7 +208,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+"""
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -226,3 +226,4 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+"""
