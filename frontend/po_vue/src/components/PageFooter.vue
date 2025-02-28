@@ -2,9 +2,6 @@
   <footer class="header-footer">
     <nav class="nav-footer">
       <button class="footer-button">
-        <img src="/assets/info.svg" alt="info" class="svg-footer"/>
-      </button>
-      <button class="footer-button">
         <a href="https://www.holbertonschool.fr/" target="_blank">
           <img src="/assets/seahorse_48x90.svg" alt="holberton" class="svg-footer"/>
         </a>
