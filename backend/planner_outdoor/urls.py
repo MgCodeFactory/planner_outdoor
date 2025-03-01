@@ -23,6 +23,7 @@ from po_app.auth_views import (
     CustomPasswordResetConfirmView,
 )
 from po_app.views import (
+    ApiRootView,
     UsersViewSet,
     ActivitiesViewSet,
     UserActivitiesViewSet,
@@ -41,6 +42,8 @@ from po_app.weather import (
 urlpatterns = [
     # django admin console
     path("admin/", admin.site.urls),
+    # root api
+    path('', ApiRootView.as_view(), name='api-root'),
     # validators help messages endpoint
     path("validators-rules/",
          ValidationRulesView.as_view(),

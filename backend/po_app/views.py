@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from po_app.models import (
@@ -14,6 +15,23 @@ from po_app.serializers import (
     UserActivitiesSerializer,
     PlannedActivitiesSerializer,
 )
+
+
+class ApiRootView(APIView):
+    """
+    API root view.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """
+        API root help endpoint.
+        """
+        return Response({
+            "message": "Welcome to Planner outdoor API. For complete documentation visit:",
+            "swagger_url": request.build_absolute_uri('/schema/swagger/'),
+            "redoc_url": request.build_absolute_uri('/schema/redoc/'),
+        })
 
 
 class UsersViewSet(viewsets.ModelViewSet):

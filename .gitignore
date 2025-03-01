@@ -5,7 +5,6 @@ __pycache__/
 .env
 .dockerignore
 db.sqlite3
-*.sql
 .cache_ggshield
 node_modules/
 *.log
