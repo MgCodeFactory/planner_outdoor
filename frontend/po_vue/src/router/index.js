@@ -14,9 +14,10 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/weather",
+    path: "/weather/:city/:lat/:lon",
     name: "weather",
     component: WeatherView,
+    props: true
   },
   {
     path: "/register",
@@ -34,9 +35,10 @@ const routes = [
     component: AccountManagerView,
   },
   {
-    path: "/weather-details/:itemCity/:itemDt",
-    name: "WeatherDetails",
+    path: "/weather-details/:itemCity/:lat/:lon/:itemId",
+    name: "weather-details",
     component: WeatherDetailsView,
+    props: true
   },
   {
     //path: "/about",

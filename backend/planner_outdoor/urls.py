@@ -37,6 +37,7 @@ from drf_spectacular.views import (
 from po_app.weather import (
     GeocodingView,
     WeatherView,
+    WeatherDetailsView,
 )
 
 urlpatterns = [
@@ -157,6 +158,11 @@ urlpatterns = [
         "weather/<path:lat>/<path:lon>/",
         WeatherView.as_view(),
         name="weather",
+    ),
+    path(
+        "weather-details/<path:lat>/<path:lon>/<path:day_id>/",
+        WeatherDetailsView.as_view(),
+        name="weather-details",
     ),
     # Documentation API endpoints
     path(

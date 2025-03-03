@@ -102,36 +102,6 @@ class Activities(models.Model):
         return f"{self.name} - {self.description}"
 
 
-class Allergens(models.Model):
-    """
-    Model representing an allergen.
-    """
-
-    name = models.CharField(
-        unique=True,
-        max_length=50,
-        blank=False,
-        null=False,
-        validators=[CustomNameValidator()],
-    )
-    description = models.CharField(
-        unique=True,
-        max_length=200,
-        blank=False,
-        null=False,
-        validators=[CustomDescriptionValidator()],
-    )
-
-    class Meta:
-        verbose_name_plural = "Allergens"
-
-    def __str__(self):
-        """
-        Returns a string representation of the allergen object.
-        """
-        return f"{self.name} - {self.description}"
-
-
 class UserActivities(models.Model):
     """
     Model representing a user activity.
@@ -155,31 +125,6 @@ class UserActivities(models.Model):
         Returns a string representation of the user activity object.
         """
         return f"{self.user.username} - {self.activity.name}"
-
-
-class UserAllergens(models.Model):
-    """
-    Model representing a user"s allergen.
-    """
-
-    user = models.ForeignKey(
-        Users,
-        on_delete=models.CASCADE,
-    )
-    allergen = models.ForeignKey(
-        Allergens,
-        on_delete=models.CASCADE,
-    )
-
-    class Meta:
-        unique_together = ("user", "allergen")
-        verbose_name_plural = "UserAllergens"
-
-    def __str__(self) -> str:
-        """
-        Returns a string representation of the user allergen object.
-        """
-        return f"{self.user.username} - {self.allergen.name}"
 
 
 class PlannedActivities(models.Model):

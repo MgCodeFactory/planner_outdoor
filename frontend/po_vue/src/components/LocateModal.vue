@@ -102,8 +102,8 @@ export default {
     },
     goToWeather() {
       this.$router.push({
-        path: 'weather',
-        query: {
+        name: 'weather',
+        params: {
           city: this.city,
           lat: this.userSelection.lat,
           lon: this.userSelection.lon,

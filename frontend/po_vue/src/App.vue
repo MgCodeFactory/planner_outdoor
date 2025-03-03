@@ -56,7 +56,7 @@ export default {
 }
 
 .classic-button {
-  @apply flex-1 mx-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-300 text-white font-bold py-2 px-4 rounded;
+  @apply flex-1 mx-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-300 text-white font-bold mt-2 py-2 px-4 rounded;
 }
 
 .footer-button {
@@ -96,10 +96,10 @@ export default {
 }
 
 .weather-container {
-  @apply flex flex-row flex-wrap justify-center items-center gap-5 max-w-fit;
+  @apply flex flex-row flex-wrap justify-center items-center gap-5 max-w-fit p-2;
 }
 
 .weather-item {
-  @apply z-20 opacity-100 bg-zinc-200 border border-b-gray-400 rounded-md hover:ring-2 hover:border-black hover:ring-black p-2 max-w-sm md:max-w-lg;
+  @apply flex flex-col justify-center items-center z-20 opacity-100 bg-zinc-200 border border-b-gray-400 rounded-md hover:ring-2 hover:border-black hover:ring-black p-2 max-w-sm md:max-w-lg;
 }
 </style>

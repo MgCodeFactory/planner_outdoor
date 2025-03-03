@@ -1,48 +1,42 @@
 <template>
   <div class="standard-container">
     <div class="standard-item">
-      <h2 v-if="success">Weather at {{ city }}</h2>
-      <h3 v-else>No weather data or bad city name</h3>
+      <h2 class="text-center font-bold" v-if="success">
+        Weather at {{ city }}
+      </h2>
+      <h3 class="text-center" v-else>No weather data or bad city name</h3>
+      <p class="text-center text-sm italic" v-if="!userLoggedIn">
+        You must be logged in to see details
+      </p>
     </div>
     <div v-show="success" class="weather-container">
-      <div class="weather-item">
-        <div
-          v-for="(item, index) in forecast"
-          :key="index"
+      <div v-for="(item, index) in forecast" :key="index" class="weather-item">
+        <p>
+          {{ item.date }}
+        </p>
+        <p>
+          MIN: {{ item.temperature.min_C }} °C / {{ item.temperature.min_F }} °F
+        </p>
+        <p>
+          MAX: {{ item.temperature.max_C }} °C / {{ item.temperature.max_F }} °F
+        </p>
+        <img
+          v-if="item.weather_icon"
+          :src="`${urlIcon}/${item.weather_icon}.svg`"
+          :alt="item.weather"
+          class="object-center"
+        />
+        <button
+          :disabled="!userLoggedIn"
+          type="button"
+          class="classic-button"
           @click="goToDetails(item)"
         >
-          <p>
-            {{ item.date.year }} - {{ item.date.month }} - {{ item.date.day }}
-          </p>
-          <p>
-            MIN: {{ item.temperature.min_C }} °C /
-            {{ item.temperature.min_F }} °F
-          </p>
-          <p>
-            MAX: {{ item.temperature.max_C }} °C /
-            {{ item.temperature.max_F }} °F
-          </p>
-          <img
-            v-if="item.weather_icon"
-            :src="`${urlIcon}/${item.weather_icon}.svg`"
-            :alt="item.weather"
-            class="object-center"
-          />
-          <button
-            type="button"
-            class="classic-button"
-            @click="goToDetails(item)"
-          >
-            Details
-          </button>
-        </div>
+          Details
+        </button>
       </div>
-      <LoginModal
-        v-if="showModal"
-        :show="showModal"
-        @close="showModal = false"
-      />
     </div>
+    <LoginModal v-if="showModal" :show="showModal" @close="showModal = false" />
   </div>
 </template>
 
@@ -55,21 +49,30 @@ export default {
   components: {
     LoginModal,
   },
+  props: {
+    city: {
+      type: String,
+      required: true,
+    },
+    lat: {
+      type: [Number, String],
+      required: true,
+    },
+    lon: {
+      type: [Number, String],
+      required: true,
+    },
+  },
   data() {
     return {
-      city: {},
+      //city: '',
       forecast: {},
       success: false,
       showModal: false,
     };
   },
-  created() {
+  mounted() {
     this.fetchWeatherData();
-  },
-  watch: {
-    '$route.query.city': 'fetchWeatherData',
-    '$route.query.lat': 'fetchWeatherData',
-    '$route.query.lon': 'fetchWeatherData',
   },
   computed: {
     userLoggedIn() {
@@ -79,14 +82,10 @@ export default {
   methods: {
     async fetchWeatherData() {
       try {
-        const city = this.$route.query.city;
-        const lat = this.$route.query.lat;
-        const lon = this.$route.query.lon;
         this.success = false;
         const response = await axios.get(
-          `http://localhost:8020/weather/${lat}/${lon}/`
+          `http://localhost:8020/weather/${this.lat}/${this.lon}/`
         );
-        this.city = city;
         this.forecast = response.data.data;
         this.urlIcon = response.data.url_icon;
         this.success = true;
@@ -96,21 +95,15 @@ export default {
       }
     },
     goToDetails(item) {
-      if (this.userLoggedIn) {
-        this.$router.push({
-          name: 'weather-details',
-          params: {
-            itemCity: this.city,
-            itemDt: item.dt,
-          },
-          query: {
-            lat: this.$route.query.lat,
-            lon: this.$route.query.lon,
-          },
-        });
-      } else {
-        this.showModal = true;
-      }
+      this.$router.push({
+        name: 'weather-details',
+        params: {
+          itemCity: this.city,
+          lat: this.lat,
+          lon: this.lon,
+          itemId: item.day_id,
+        },
+      });
     },
   },
 };
