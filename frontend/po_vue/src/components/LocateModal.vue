@@ -93,7 +93,11 @@ export default {
       }
     },
     selectedRoute() {
-      if (this.route.name === 'register' || this.route.name === 'account') {
+      if (
+        this.route.name === 'register' ||
+        this.route.name === 'account' ||
+        this.route.name === 'planned-activities'
+      ) {
         this.$emit('location-selected', this.userSelection);
       } else {
         this.$router.push('/');

@@ -10,12 +10,13 @@
     "tailwind:init": "tailwindcss init"
   },
   "dependencies": {
+    "@vue/cli-service": "^5.0.8",
     "axios": "^1.7.9",
     "core-js": "^3.8.3",
+    "v-calendar": "^3.1.2",
     "vue": "^3.2.13",
     "vue-multiselect": "^3.0.0-beta.3",
     "vue-router": "^4.0.3",
-    "@vue/cli-service": "^5.0.8",
     "vuex": "^4.0.0"
   },
   "devDependencies": {

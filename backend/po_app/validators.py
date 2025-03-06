@@ -17,7 +17,7 @@ class CustomUsernameValidator:
         if not isinstance(username, str):
             raise ValidationError("Username must be a valid string.")
         if re.match(r"^[\s]+$", username):
-            raise ValidationError("Username cantt be blank.")
+            raise ValidationError("Username cant be blank.")
         if username.isdigit():
             raise ValidationError("Username must not contains only digit.")
         if not re.match(r"^[a-zA-Z0-9\s_-]+$", username):
@@ -86,7 +86,7 @@ class CustomLocationValidator:
         """
         # init regex
         required_keys = ["name", "lat", "lon", "country"]
-        regex_name = r"^[a-zA-Z\s]+$"
+        regex_name = r"^[a-zA-Z\s-]+$"
         regex_country = r"^[A-Z]+$"
         # tests location validation
         try:
@@ -108,7 +108,8 @@ class CustomLocationValidator:
         if location["name"].isspace():
             raise ValidationError("Location name must not be empty.")
         if not re.match(regex_name, location["name"]):
-            raise ValidationError("Location name must contain only letters.")
+            raise ValidationError(
+                "Location name must contain only letters and -.")
         if not isinstance(location["lat"], (int, float)):
             raise ValidationError(
                 "Location latitude must be a valid float number.")

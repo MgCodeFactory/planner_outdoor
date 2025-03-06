@@ -48,7 +48,7 @@ export default {
 }
 
 .nav-header {
-  @apply flex justify-between;
+  @apply flex flex-wrap sm:flex-nowrap justify-between;
 }
 
 .nav-footer {
@@ -57,6 +57,10 @@ export default {
 
 .classic-button {
   @apply flex-1 mx-2 bg-blue-500 hover:bg-blue-700 disabled:bg-gray-300 text-white font-bold mt-2 py-2 px-4 rounded;
+}
+
+.delete-account-button {
+  @apply flex-1 mx-2 bg-red-600 hover:bg-red-800 text-white font-bold mt-2 py-2 px-4 rounded;
 }
 
 .footer-button {
@@ -84,7 +88,7 @@ export default {
 }
 
 .standard-item {
-  @apply z-20 opacity-100 bg-zinc-200 border border-b-gray-400 rounded-md  hover:ring-2 hover:border-black hover:ring-black p-2 max-w-sm md:max-w-lg;
+  @apply z-20 opacity-100 bg-zinc-200 border border-b-gray-400 rounded-md  hover:ring-2 hover:border-black hover:ring-black p-2 m-2 max-w-sm md:max-w-lg;
 }
 
 .error-message {

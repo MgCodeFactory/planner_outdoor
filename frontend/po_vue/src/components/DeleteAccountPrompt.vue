@@ -6,7 +6,7 @@
         <div class="flex flex-row items-center justify-center">
           <button
             type="button"
-            class="classic-button"
+            class="delete-account-button"
             v-if="showDeleteButton"
             @click="handleActionClick"
           >

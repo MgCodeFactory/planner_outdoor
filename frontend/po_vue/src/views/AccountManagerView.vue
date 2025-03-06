@@ -70,7 +70,7 @@
         >
           OK
         </button>
-        <button class="classic-button" @click="openDeleteAccountModal">
+        <button class="delete-account-button" @click="openDeleteAccountModal">
           DELETE ACCOUNT
         </button>
         <DeleteAccountPrompt
@@ -78,6 +78,9 @@
           :show="showDeleteAccountModal"
           @close="showDeleteAccountModal = false"
         />
+        <button class="classic-button" @click="goToPlannedActivities">
+          PLANIFY ACTIVITIES
+        </button>
       </form>
     </div>
     <div class="standard-item">
@@ -123,8 +126,7 @@ export default {
       this.showLocateModal = false;
     },
     openDeleteAccountModal() {
-      this.errorAccountMsg = '';
-      this.successAccountMsg = '';
+      this.clearMessages();
       this.showDeleteAccountModal = true;
     },
     async getUserAccountInfo() {
@@ -183,7 +185,9 @@ export default {
           }
         );
         this.errorAccountMsg = '';
-        this.successAccountMsg = 'Data updated successfully';
+        if (dataToUpdate) {
+          this.successAccountMsg = 'Data updated successfully';
+        }
         await this.getUserAccountInfo();
         // Update store informations
         this.$store.commit('setUsername', response.data.username);
@@ -210,6 +214,9 @@ export default {
           this.errorAccountMsg = 'An unexpected error occurred';
         }
       }
+    },
+    goToPlannedActivities() {
+      this.$router.push('/planned-activities');
     },
     clearMessages() {
       this.successAccountMsg = '';

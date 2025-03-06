@@ -5,6 +5,7 @@ import WeatherDetailsView from "../views/WeatherDetailsView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import PasswordResetConfirmView from "../views/PasswordResetConfirmView.vue";
 import AccountManagerView from "../views/AccountManagerView.vue";
+import PlannedActivitiesView from "../views/PlannedActivitiesView.vue";
 
 
 const routes = [
@@ -39,6 +40,11 @@ const routes = [
     name: "weather-details",
     component: WeatherDetailsView,
     props: true
+  },
+  {
+    path: "/planned-activities",
+    name: "planned-activities",
+    component: PlannedActivitiesView,
   },
   {
     //path: "/about",
