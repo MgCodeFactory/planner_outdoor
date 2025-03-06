@@ -121,6 +121,7 @@ export default {
     };
   },
   methods: {
+    // Toggle function to show login form
     toggleLoginForm() {
       this.showLoginForm = true;
       this.showResetForm = false;
@@ -175,9 +176,11 @@ export default {
     // async method to obtain user authentification with good credentials
     async loginAccount() {
       if (!this.validInputEmail(this.loginEmail)) {
+        this.errorMsg = 'Invalid user email.';
         return;
       }
       if (!this.validInputPassword(this.loginPassword)) {
+        this.errorMsg = 'Invalid user password.';
         return;
       }
       try {

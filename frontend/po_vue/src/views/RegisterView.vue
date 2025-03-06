@@ -12,7 +12,10 @@
           v-on:focus="usernameHelp"
           v-on:focusout="showHelpUsername = false"
         />
-        <p v-show="showHelpUsername" class="text-center text-sm italic max-w-full">
+        <p
+          v-show="showHelpUsername"
+          class="text-center text-sm italic max-w-full"
+        >
           {{ usernameRules }}
         </p>
         <input
@@ -31,7 +34,10 @@
           v-on:focus="passwordHelp"
           v-on:focusout="showHelpPassword = false"
         />
-        <p v-show="showHelpPassword" class="text-center text-sm italic max-w-full">
+        <p
+          v-show="showHelpPassword"
+          class="text-center text-sm italic max-w-full"
+        >
           {{ passwordRules }}
         </p>
         <input
@@ -121,12 +127,77 @@ export default {
         console.error('Failed to fetch validation rules:', error);
       }
     },
+    // username input validation
+    // Must be a string, length less than 50,
+    // no special characters (except: _ -)
+    validRegisterUsername(username) {
+      const usernameRegex = /^[a-zA-Z0-9_-]{1,50}$/;
+      if (!usernameRegex.test(username)) {
+        return false;
+      }
+      return true;
+    },
+    // email input validation xxxxxxx@xxx.xxxx
+    validRegisterEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return false;
+      }
+      return true;
+    },
+    // password input validation
+    // At least 8 characters, one uppercase, one lowercase,
+    // one number, one special character, and all different
+    validRegisterPassword(password) {
+      if (password.length < 8) {
+        this.errorMsg = 'Password must be at least 8 characters long.';
+        return false;
+      }
+      const charSet = new Set(password);
+      if (charSet.size !== password.length) {
+        this.errorMsg = 'In password, all characters must be different.';
+        return false;
+      }
+      const upperCount = (password.match(/[A-Z]/g) || []).length;
+      const lowerCount = (password.match(/[a-z]/g) || []).length;
+      const digitCount = (password.match(/[0-9]/g) || []).length;
+      if (upperCount === 0) {
+        this.errorMsg = 'Password must contain at least one uppercase letter.';
+        return false;
+      }
+      if (lowerCount === 0) {
+        this.errorMsg = 'Password must contain at least one lowercase letter.';
+        return false;
+      }
+      if (digitCount === 0) {
+        this.errorMsg = 'Password must contain at least one digit.';
+        return false;
+      }
+      const globalCount = upperCount + lowerCount + digitCount;
+      if (globalCount === password.length) {
+        this.errorMsg = 'Password must contain at least one special character.';
+        return false;
+      }
+      return true;
+    },
     setLocationValue(selectedLocation) {
       this.location = null;
       this.location = selectedLocation;
       this.showLocateModal = false;
     },
     async register() {
+      if (!this.validRegisterUsername(this.username)) {
+        this.errorMsg = 'Invalid username.';
+        return;
+      }
+      if (!this.validRegisterEmail(this.email)) {
+        this.errorMsg = 'Invalid email.';
+        return;
+      }
+      if (!this.validRegisterPassword(this.password)) {
+        this.errorMsg = 'Invalid password.';
+        return;
+      }
       try {
         const response = await axios.post(
           'http://localhost:8020/auth/register/',

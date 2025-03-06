@@ -72,6 +72,7 @@ export default {
     this.fetchActivitiesList();
   },
   methods: {
+    // async method to retreive the list of activities
     async fetchActivitiesList() {
       try {
         const response = await axios.get(
@@ -88,6 +89,7 @@ export default {
         this.errorMsg = `Error fetching activities list: ${error}`;
       }
     },
+    // async method to retreive activities of a user
     async fetchSelectedActivities() {
       try {
         const response = await axios.get(
@@ -108,6 +110,7 @@ export default {
         this.errorMsg = `Error fetching selected activities: ${error}`;
       }
     },
+    // method to save and apply chages to database
     async saveUserActivities() {
       const userId = this.$store.getters.getUserId;
       const activitiesToDelete = this.currentDbActivities.filter(

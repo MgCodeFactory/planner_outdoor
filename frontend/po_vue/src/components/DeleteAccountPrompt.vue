@@ -70,6 +70,7 @@ export default {
         this.deleteUserAccount();
       }
     },
+    // async method to delete account user definitely
     async deleteUserAccount() {
       try {
         await axios.delete(
@@ -104,12 +105,6 @@ export default {
       this.confirmDelete = false;
     },
   },
-  /*
-  watch: {
-    show(newValue) {
-      if (newValue) this.resetModal();
-    },
-  },*/
 };
 </script>
 
